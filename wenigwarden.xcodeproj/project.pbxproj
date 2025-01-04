@@ -1,0 +1,661 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 70;
+	objects = {
+
+/* Begin PBXAggregateTarget section */
+		7EB6F7682C763BDA00C6AC18 /* Periphery */ = {
+			isa = PBXAggregateTarget;
+			buildConfigurationList = 7EB6F76B2C763BDA00C6AC18 /* Build configuration list for PBXAggregateTarget "Periphery" */;
+			buildPhases = (
+				7EB6F76C2C763BE400C6AC18 /* ShellScript */,
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				7E7CE2332D2941D2005CFF39 /* Config */,
+				7E7CE2362D294205005CFF39 /* Preview Content */,
+				7E7CE23A2D294329005CFF39 /* Services */,
+			);
+			name = Periphery;
+			productName = Periphery;
+		};
+/* End PBXAggregateTarget section */
+
+/* Begin PBXBuildFile section */
+		7E0875762CC0E75100C7834A /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = 7E0875752CC0E75100C7834A /* KeychainAccess */; };
+		7E0EAFCE2C73584A00030BC5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7E0EAFCD2C73584A00030BC5 /* Assets.xcassets */; };
+		7E0EAFDF2C7362E900030BC5 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E0EAFDE2C7362E900030BC5 /* LoginView.swift */; };
+		7E0EAFF32C73984A00030BC5 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 7E0EAFF22C73984A00030BC5 /* Alamofire */; };
+		7E3387A22C74B292003EE9DF /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 7E3387A12C74B292003EE9DF /* CryptoSwift */; };
+		7E761E222C7DDE490037DA47 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E761E212C7DDE490037DA47 /* LoginViewModel.swift */; };
+		7E761E302C7DEADA0037DA47 /* CipherListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E761E2F2C7DEADA0037DA47 /* CipherListViewModel.swift */; };
+		7E761E382C7DEC8D0037DA47 /* CipherDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E761E372C7DEC8D0037DA47 /* CipherDetailsViewModel.swift */; };
+		7E77A5272C78E75E00EC9A1D /* CipherListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E77A5262C78E75E00EC9A1D /* CipherListView.swift */; };
+		7E77A5292C7C8FA300EC9A1D /* CipherListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E77A5282C7C8FA300EC9A1D /* CipherListItemView.swift */; };
+		7E77A52B2C7C9D7F00EC9A1D /* CipherDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E77A52A2C7C9D7F00EC9A1D /* CipherDetailsView.swift */; };
+		7EB6F7602C74F1D400C6AC18 /* VaultModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EB6F75F2C74F1D400C6AC18 /* VaultModel.swift */; };
+		7EEEDC252CB83C2D009CFD95 /* CipherModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EEEDC242CB83C29009CFD95 /* CipherModel.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		7E0EAFC62C73584800030BC5 /* wenigwarden.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = wenigwarden.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7E0EAFCD2C73584A00030BC5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		7E0EAFD22C73584A00030BC5 /* wenigwarden.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = wenigwarden.entitlements; sourceTree = "<group>"; };
+		7E0EAFDE2C7362E900030BC5 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		7E761E212C7DDE490037DA47 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
+		7E761E2F2C7DEADA0037DA47 /* CipherListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CipherListViewModel.swift; sourceTree = "<group>"; };
+		7E761E372C7DEC8D0037DA47 /* CipherDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CipherDetailsViewModel.swift; sourceTree = "<group>"; };
+		7E77A5262C78E75E00EC9A1D /* CipherListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CipherListView.swift; sourceTree = "<group>"; };
+		7E77A5282C7C8FA300EC9A1D /* CipherListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CipherListItemView.swift; sourceTree = "<group>"; };
+		7E77A52A2C7C9D7F00EC9A1D /* CipherDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CipherDetailsView.swift; sourceTree = "<group>"; };
+		7E7CE2412D2947B1005CFF39 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
+		7EB6F75F2C74F1D400C6AC18 /* VaultModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VaultModel.swift; sourceTree = "<group>"; };
+		7EEEDC242CB83C29009CFD95 /* CipherModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CipherModel.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		7E7CE22F2D2940D8005CFF39 /* App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = App; sourceTree = "<group>"; };
+		7E7CE2312D29414E005CFF39 /* Home */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Home; sourceTree = "<group>"; };
+		7E7CE2332D2941D2005CFF39 /* Config */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Config; sourceTree = "<group>"; };
+		7E7CE2362D294205005CFF39 /* Preview Content */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = "Preview Content"; sourceTree = "<group>"; };
+		7E7CE2392D294295005CFF39 /* Utils */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Utils; sourceTree = "<group>"; };
+		7E7CE23A2D294329005CFF39 /* Services */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Services; sourceTree = "<group>"; };
+		7E7CE2402D2943E9005CFF39 /* Components */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Components; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		7E0EAFC32C73584800030BC5 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7E0EAFF32C73984A00030BC5 /* Alamofire in Frameworks */,
+				7E3387A22C74B292003EE9DF /* CryptoSwift in Frameworks */,
+				7E0875762CC0E75100C7834A /* KeychainAccess in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		7E0EAFBD2C73584800030BC5 = {
+			isa = PBXGroup;
+			children = (
+				7E0EAFC82C73584800030BC5 /* wenigwarden */,
+				7E0EAFC72C73584800030BC5 /* Products */,
+				7E761E162C7CD6530037DA47 /* Frameworks */,
+				7E7CE2412D2947B1005CFF39 /* .swiftlint.yml */,
+			);
+			sourceTree = "<group>";
+		};
+		7E0EAFC72C73584800030BC5 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				7E0EAFC62C73584800030BC5 /* wenigwarden.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		7E0EAFC82C73584800030BC5 /* wenigwarden */ = {
+			isa = PBXGroup;
+			children = (
+				7E7CE22F2D2940D8005CFF39 /* App */,
+				7E761E242C7DE09A0037DA47 /* Core */,
+				7E761E262C7DE10A0037DA47 /* Models */,
+				7E7CE23A2D294329005CFF39 /* Services */,
+				7E761E1A2C7DDD590037DA47 /* Features */,
+				7E7CE2332D2941D2005CFF39 /* Config */,
+				7E761E1E2C7DDD980037DA47 /* Resources */,
+				7E0EAFD22C73584A00030BC5 /* wenigwarden.entitlements */,
+				7E7CE2362D294205005CFF39 /* Preview Content */,
+			);
+			path = wenigwarden;
+			sourceTree = "<group>";
+		};
+		7E761E162C7CD6530037DA47 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		7E761E1A2C7DDD590037DA47 /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				7E7CE2312D29414E005CFF39 /* Home */,
+				7E761E1B2C7DDD610037DA47 /* Login */,
+				7E761E1C2C7DDD670037DA47 /* CipherList */,
+				7E761E332C7DEC510037DA47 /* CipherDetails */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+		7E761E1B2C7DDD610037DA47 /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				7E761E232C7DE03E0037DA47 /* Views */,
+				7E761E202C7DDE390037DA47 /* ViewModels */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
+		7E761E1C2C7DDD670037DA47 /* CipherList */ = {
+			isa = PBXGroup;
+			children = (
+				7E761E2E2C7DEA950037DA47 /* ViewModels */,
+				7E761E2C2C7DEA430037DA47 /* Views */,
+			);
+			path = CipherList;
+			sourceTree = "<group>";
+		};
+		7E761E1E2C7DDD980037DA47 /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				7E0EAFCD2C73584A00030BC5 /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		7E761E202C7DDE390037DA47 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				7E761E212C7DDE490037DA47 /* LoginViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		7E761E232C7DE03E0037DA47 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				7E0EAFDE2C7362E900030BC5 /* LoginView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		7E761E242C7DE09A0037DA47 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				7E7CE2402D2943E9005CFF39 /* Components */,
+				7E7CE2392D294295005CFF39 /* Utils */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		7E761E262C7DE10A0037DA47 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				7EEEDC242CB83C29009CFD95 /* CipherModel.swift */,
+				7EB6F75F2C74F1D400C6AC18 /* VaultModel.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		7E761E2C2C7DEA430037DA47 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				7E77A5282C7C8FA300EC9A1D /* CipherListItemView.swift */,
+				7E77A5262C78E75E00EC9A1D /* CipherListView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		7E761E2E2C7DEA950037DA47 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				7E761E2F2C7DEADA0037DA47 /* CipherListViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+		7E761E332C7DEC510037DA47 /* CipherDetails */ = {
+			isa = PBXGroup;
+			children = (
+				7E761E362C7DEC7E0037DA47 /* ViewModels */,
+				7E761E342C7DEC590037DA47 /* Views */,
+			);
+			path = CipherDetails;
+			sourceTree = "<group>";
+		};
+		7E761E342C7DEC590037DA47 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				7E77A52A2C7C9D7F00EC9A1D /* CipherDetailsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		7E761E362C7DEC7E0037DA47 /* ViewModels */ = {
+			isa = PBXGroup;
+			children = (
+				7E761E372C7DEC8D0037DA47 /* CipherDetailsViewModel.swift */,
+			);
+			path = ViewModels;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		7E0EAFC52C73584800030BC5 /* wenigwarden */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 7E0EAFD52C73584A00030BC5 /* Build configuration list for PBXNativeTarget "wenigwarden" */;
+			buildPhases = (
+				7E0EAFC22C73584800030BC5 /* Sources */,
+				7E0EAFC32C73584800030BC5 /* Frameworks */,
+				7E0EAFC42C73584800030BC5 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				7E77A5252C779B9200EC9A1D /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				7E7CE22F2D2940D8005CFF39 /* App */,
+				7E7CE2312D29414E005CFF39 /* Home */,
+				7E7CE2332D2941D2005CFF39 /* Config */,
+				7E7CE2362D294205005CFF39 /* Preview Content */,
+				7E7CE2392D294295005CFF39 /* Utils */,
+				7E7CE23A2D294329005CFF39 /* Services */,
+				7E7CE2402D2943E9005CFF39 /* Components */,
+			);
+			name = wenigwarden;
+			packageProductDependencies = (
+				7E0EAFF22C73984A00030BC5 /* Alamofire */,
+				7E3387A12C74B292003EE9DF /* CryptoSwift */,
+				7E0875752CC0E75100C7834A /* KeychainAccess */,
+			);
+			productName = wenigwarden;
+			productReference = 7E0EAFC62C73584800030BC5 /* wenigwarden.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		7E0EAFBE2C73584800030BC5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1620;
+				TargetAttributes = {
+					7E0EAFC52C73584800030BC5 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+					7EB6F7682C763BDA00C6AC18 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = 7E0EAFC12C73584800030BC5 /* Build configuration list for PBXProject "wenigwarden" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 7E0EAFBD2C73584800030BC5;
+			packageReferences = (
+				7E0EAFD82C735A0500030BC5 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
+				7E0EAFF12C73984A00030BC5 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				7E3387A02C74B292003EE9DF /* XCRemoteSwiftPackageReference "CryptoSwift" */,
+				7E0875742CC0E6C700C7834A /* XCRemoteSwiftPackageReference "KeychainAccess" */,
+			);
+			productRefGroup = 7E0EAFC72C73584800030BC5 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				7E0EAFC52C73584800030BC5 /* wenigwarden */,
+				7EB6F7682C763BDA00C6AC18 /* Periphery */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		7E0EAFC42C73584800030BC5 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7E0EAFCE2C73584A00030BC5 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		7EB6F76C2C763BE400C6AC18 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "PATH=${PATH}:/opt/homebrew/bin/\nperiphery scan --format xcode\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		7E0EAFC22C73584800030BC5 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				7E77A5272C78E75E00EC9A1D /* CipherListView.swift in Sources */,
+				7EB6F7602C74F1D400C6AC18 /* VaultModel.swift in Sources */,
+				7E77A5292C7C8FA300EC9A1D /* CipherListItemView.swift in Sources */,
+				7E761E382C7DEC8D0037DA47 /* CipherDetailsViewModel.swift in Sources */,
+				7E761E222C7DDE490037DA47 /* LoginViewModel.swift in Sources */,
+				7E77A52B2C7C9D7F00EC9A1D /* CipherDetailsView.swift in Sources */,
+				7E0EAFDF2C7362E900030BC5 /* LoginView.swift in Sources */,
+				7EEEDC252CB83C2D009CFD95 /* CipherModel.swift in Sources */,
+				7E761E302C7DEADA0037DA47 /* CipherListViewModel.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		7E77A5252C779B9200EC9A1D /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 7E77A5242C779B9200EC9A1D /* SwiftLintBuildToolPlugin */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		7E0EAFD32C73584A00030BC5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		7E0EAFD42C73584A00030BC5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MACOSX_DEPLOYMENT_TARGET = 14.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+			};
+			name = Release;
+		};
+		7E0EAFD62C73584A00030BC5 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = wenigwarden/wenigwarden.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"wenigwarden/Preview Content\"";
+				DEVELOPMENT_TEAM = AFPY33LTKS;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.cyprien.wenigwarden;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		7E0EAFD72C73584A00030BC5 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = wenigwarden/wenigwarden.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
+				DEVELOPMENT_ASSET_PATHS = "\"wenigwarden/Preview Content\"";
+				DEVELOPMENT_TEAM = AFPY33LTKS;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_LSUIElement = YES;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = io.cyprien.wenigwarden;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+		7EB6F7692C763BDA00C6AC18 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Debug;
+		};
+		7EB6F76A2C763BDA00C6AC18 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+				DEAD_CODE_STRIPPING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		7E0EAFC12C73584800030BC5 /* Build configuration list for PBXProject "wenigwarden" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7E0EAFD32C73584A00030BC5 /* Debug */,
+				7E0EAFD42C73584A00030BC5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7E0EAFD52C73584A00030BC5 /* Build configuration list for PBXNativeTarget "wenigwarden" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7E0EAFD62C73584A00030BC5 /* Debug */,
+				7E0EAFD72C73584A00030BC5 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		7EB6F76B2C763BDA00C6AC18 /* Build configuration list for PBXAggregateTarget "Periphery" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				7EB6F7692C763BDA00C6AC18 /* Debug */,
+				7EB6F76A2C763BDA00C6AC18 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		7E0875742CC0E6C700C7834A /* XCRemoteSwiftPackageReference "KeychainAccess" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kishikawakatsumi/KeychainAccess";
+			requirement = {
+				branch = master;
+				kind = branch;
+			};
+		};
+		7E0EAFD82C735A0500030BC5 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SimplyDanny/SwiftLintPlugins";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.56.1;
+			};
+		};
+		7E0EAFF12C73984A00030BC5 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.9.1;
+			};
+		};
+		7E3387A02C74B292003EE9DF /* XCRemoteSwiftPackageReference "CryptoSwift" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/krzyzanowskim/CryptoSwift.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.8.3;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		7E0875752CC0E75100C7834A /* KeychainAccess */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7E0875742CC0E6C700C7834A /* XCRemoteSwiftPackageReference "KeychainAccess" */;
+			productName = KeychainAccess;
+		};
+		7E0EAFF22C73984A00030BC5 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7E0EAFF12C73984A00030BC5 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
+		7E3387A12C74B292003EE9DF /* CryptoSwift */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7E3387A02C74B292003EE9DF /* XCRemoteSwiftPackageReference "CryptoSwift" */;
+			productName = CryptoSwift;
+		};
+		7E77A5242C779B9200EC9A1D /* SwiftLintBuildToolPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7E0EAFD82C735A0500030BC5 /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */;
+			productName = "plugin:SwiftLintBuildToolPlugin";
+		};
+/* End XCSwiftPackageProductDependency section */
+	};
+	rootObject = 7E0EAFBE2C73584800030BC5 /* Project object */;
+}

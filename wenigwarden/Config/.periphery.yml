@@ -1,0 +1,5 @@
+project: wenigwarden.xcodeproj
+schemes:
+- wenigwarden
+targets:
+- wenigwarden
