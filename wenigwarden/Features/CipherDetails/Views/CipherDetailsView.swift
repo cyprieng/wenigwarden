@@ -9,66 +9,37 @@ import SwiftUI
 
 /// A view representing the details of a cipher
 struct CipherDetailsView: View {
-    @StateObject var viewModel = CipherDetailsViewModel()
+    @State
+    var cipher: CipherModel
+
+    @State var isPasswordVisible: Bool = false
 
     var body: some View {
-        VStack {
-            HStack {
-                backButton
+        ScrollView {
+            VStack {
+                detailRow(title: "Name", value: $cipher.name)
 
-                Spacer()
+                if let login = cipher.login?.username, !login.isEmpty {
+                    detailRow(title: "Login", value: Binding(
+                        get: { cipher.login?.username ?? "" },
+                        set: { newValue in cipher.login?.username = newValue }
+                    ))
+                }
 
-                Text("Show details")
+                if let uri = cipher.login?.uri, !uri.isEmpty {
+                    uriRow(uri: cipher.login!.uri!)
+                }
 
-                Spacer()
-
-                editButton
+                if let password = cipher.login?.password, !password.isEmpty {
+                    passwordRow(password: Binding(
+                        get: { cipher.login?.password ?? "" },
+                        set: { newValue in cipher.login?.password = newValue }
+                    ))
+                }
             }
-            .padding([.bottom], 30)
-
-            detailsContent()
+            .frame(maxHeight: .infinity, alignment: .top)
         }
-        .onAppear(perform: viewModel.loadInitialCipher)
-    }
-
-    /// The back button to deselect the cipher
-    private var backButton: some View {
-        Button(action: { AppState.shared.cipherSelected = nil }, label: {
-            Label("Back", systemImage: "arrow.left")
-        })
-    }
-
-    /// The edit button to toggle edit mode
-    private var editButton: some View {
-        if viewModel.isEditing {
-            Button(action: {
-                viewModel.isEditing = false
-            }, label: {
-                Label("Save", systemImage: "square.and.arrow.down")
-            })
-        } else {
-            Button(action: {
-                viewModel.isEditing = true
-            }, label: {
-                Label("Edit", systemImage: "square.and.pencil")
-            })
-        }
-    }
-
-    /// The content view displaying the details of the cipher
-    @ViewBuilder
-    private func detailsContent() -> some View {
-        detailRow(title: "Name", value: $viewModel.name)
-
-        if !viewModel.username.isEmpty {
-            detailRow(title: "Login", value: $viewModel.username)
-        }
-
-        if !viewModel.uri.isEmpty {
-            uriRow(uri: viewModel.uri)
-        }
-
-        passwordRow(password: $viewModel.password)
+        .navigationTitle(cipher.name)
     }
 
     /// A row displaying a detail with a title and value
@@ -77,11 +48,8 @@ struct CipherDetailsView: View {
             Text("\(title):")
                 .bold()
 
-            if viewModel.isEditing {
-                TextField("\(title)", text: value)
-            } else {
-                Text(value.wrappedValue)
-            }
+            Text(value.wrappedValue)
+
             ClipboardButton(data: value.wrappedValue)
         }
     }
@@ -107,17 +75,7 @@ struct CipherDetailsView: View {
             Text("Password:")
                 .bold()
 
-            if viewModel.isEditing {
-                if viewModel.isPasswordVisible {
-                    TextField("Password", text: password)
-                        .textContentType(.password)
-                } else {
-                    SecureField("Password", text: password)
-                        .textContentType(.password)
-                }
-            } else {
-                Text(viewModel.isPasswordVisible ? password.wrappedValue : String(repeating: "•", count: 8))
-            }
+            Text(isPasswordVisible ? password.wrappedValue : String(repeating: "•", count: 8))
 
             ClipboardButton(data: password.wrappedValue)
             togglePasswordVisibilityButton
@@ -126,8 +84,8 @@ struct CipherDetailsView: View {
 
     /// A button to toggle the visibility of the password
     private var togglePasswordVisibilityButton: some View {
-        Button(action: { viewModel.isPasswordVisible.toggle() }, label: {
-            Image(systemName: viewModel.isPasswordVisible ? "eye.slash" : "eye")
+        Button(action: { isPasswordVisible.toggle() }, label: {
+            Image(systemName: isPasswordVisible ? "eye.slash" : "eye")
         })
     }
 }

@@ -17,8 +17,6 @@ struct HomeView: View {
             // Show the appropriate view based on the state of the vault
             if !vault.unlocked {
                 LoginView() // Show login view if the vault is locked
-            } else if state.cipherSelected != nil {
-                CipherDetailsView() // Show cipher details if a cipher is selected
             } else {
                 CipherListView() // Show the list of ciphers otherwise
             }

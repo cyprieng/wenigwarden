@@ -17,9 +17,6 @@ class AppState: ObservableObject {
     var url: String = ""
     var email: String = ""
 
-    // Published property to notify observers when the selected cipher changes
-    @Published var cipherSelected: CipherModel?
-
     /// Private initializer to enforce singleton pattern
     private init() {
         // Retrieve stored values or provide default values

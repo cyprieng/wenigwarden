@@ -29,15 +29,4 @@ class CipherListViewModel: ObservableObject {
             ciphers = Vault.shared.search(query: query)
         }
     }
-
-    /// Selects a cipher
-    /// - Parameter cipher: The cipher to select
-    public func selectCipher(_ cipher: CipherModel) {
-        AppState.shared.cipherSelected = cipher
-    }
-
-    /// Deselects the current cipher
-    public func deselectCipher() {
-        AppState.shared.cipherSelected = nil
-    }
 }

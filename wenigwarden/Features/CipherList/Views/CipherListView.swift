@@ -12,12 +12,14 @@ struct CipherListView: View {
     @ObservedObject var viewModel = CipherListViewModel()
 
     var body: some View {
-        VStack {
-            // Search field
-            searchField
+        NavigationStack {
+            VStack {
+                // Search field
+                searchField
 
-            // List of ciphers
-            cipherList
+                // List of ciphers
+                cipherList
+            }
         }
         .onAppear(perform: viewModel.loadInitialCiphers)
     }
@@ -36,19 +38,17 @@ struct CipherListView: View {
     private var cipherList: some View {
         List(viewModel.ciphers ?? []) { cipher in
             VStack(alignment: .leading) {
-                CipherListItemView(cipher: cipher)
-                    .onHover { _ in
-                        NSCursor.pointingHand.set()
-                    }
-                    .onTapGesture {
-                        viewModel.selectCipher(cipher)
-                    }
+                NavigationLink(
+                    destination: CipherDetailsView(cipher: cipher)
+                ) {
+                    CipherListItemView(cipher: cipher)
+                }
 
                 Divider()
                     .background(Color.gray.opacity(0.4))
             }
             .listRowSeparator(.hidden)
+
         }
-        .frame(height: 400)
     }
 }

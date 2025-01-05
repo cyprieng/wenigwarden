@@ -33,7 +33,6 @@
 		7E3387A22C74B292003EE9DF /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 7E3387A12C74B292003EE9DF /* CryptoSwift */; };
 		7E761E222C7DDE490037DA47 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E761E212C7DDE490037DA47 /* LoginViewModel.swift */; };
 		7E761E302C7DEADA0037DA47 /* CipherListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E761E2F2C7DEADA0037DA47 /* CipherListViewModel.swift */; };
-		7E761E382C7DEC8D0037DA47 /* CipherDetailsViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E761E372C7DEC8D0037DA47 /* CipherDetailsViewModel.swift */; };
 		7E77A5272C78E75E00EC9A1D /* CipherListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E77A5262C78E75E00EC9A1D /* CipherListView.swift */; };
 		7E77A5292C7C8FA300EC9A1D /* CipherListItemView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E77A5282C7C8FA300EC9A1D /* CipherListItemView.swift */; };
 		7E77A52B2C7C9D7F00EC9A1D /* CipherDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E77A52A2C7C9D7F00EC9A1D /* CipherDetailsView.swift */; };
@@ -48,7 +47,6 @@
 		7E0EAFDE2C7362E900030BC5 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
 		7E761E212C7DDE490037DA47 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		7E761E2F2C7DEADA0037DA47 /* CipherListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CipherListViewModel.swift; sourceTree = "<group>"; };
-		7E761E372C7DEC8D0037DA47 /* CipherDetailsViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CipherDetailsViewModel.swift; sourceTree = "<group>"; };
 		7E77A5262C78E75E00EC9A1D /* CipherListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CipherListView.swift; sourceTree = "<group>"; };
 		7E77A5282C7C8FA300EC9A1D /* CipherListItemView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CipherListItemView.swift; sourceTree = "<group>"; };
 		7E77A52A2C7C9D7F00EC9A1D /* CipherDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CipherDetailsView.swift; sourceTree = "<group>"; };
@@ -213,7 +211,6 @@
 		7E761E332C7DEC510037DA47 /* CipherDetails */ = {
 			isa = PBXGroup;
 			children = (
-				7E761E362C7DEC7E0037DA47 /* ViewModels */,
 				7E761E342C7DEC590037DA47 /* Views */,
 			);
 			path = CipherDetails;
@@ -225,14 +222,6 @@
 				7E77A52A2C7C9D7F00EC9A1D /* CipherDetailsView.swift */,
 			);
 			path = Views;
-			sourceTree = "<group>";
-		};
-		7E761E362C7DEC7E0037DA47 /* ViewModels */ = {
-			isa = PBXGroup;
-			children = (
-				7E761E372C7DEC8D0037DA47 /* CipherDetailsViewModel.swift */,
-			);
-			path = ViewModels;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -352,7 +341,6 @@
 				7E77A5272C78E75E00EC9A1D /* CipherListView.swift in Sources */,
 				7EB6F7602C74F1D400C6AC18 /* VaultModel.swift in Sources */,
 				7E77A5292C7C8FA300EC9A1D /* CipherListItemView.swift in Sources */,
-				7E761E382C7DEC8D0037DA47 /* CipherDetailsViewModel.swift in Sources */,
 				7E761E222C7DDE490037DA47 /* LoginViewModel.swift in Sources */,
 				7E77A52B2C7C9D7F00EC9A1D /* CipherDetailsView.swift in Sources */,
 				7E0EAFDF2C7362E900030BC5 /* LoginView.swift in Sources */,
