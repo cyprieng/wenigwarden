@@ -8,6 +8,11 @@
 import Foundation
 import KeychainAccess
 
+/// Vault errors enum
+enum VaultError: Error {
+    case invalidMasterKey
+}
+
 /// The `Vault` class manages the user's vault of ciphers and profile information.
 class Vault: ObservableObject {
     // Singleton instance of Vault
@@ -153,6 +158,12 @@ class Vault: ObservableObject {
     /// - Parameter masterKey: The master key
     public func unlock(masterKey: Data) async throws {
         self.encKey = try decrypt(encKey: [UInt8](masterKey), str: encryptedEncKey!)
+
+        // Enc key empty -> master key is invalid
+        if encKey?.isEmpty ?? true {
+            throw VaultError.invalidMasterKey
+        }
+
         let tempPrivateKey = try decrypt(str: encryptedPrivateKey!).toBase64()
 
         // Turn the private key into PEM formatted key
