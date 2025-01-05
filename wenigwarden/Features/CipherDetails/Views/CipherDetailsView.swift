@@ -16,7 +16,7 @@ struct CipherDetailsView: View {
 
     var body: some View {
         ScrollView {
-            VStack {
+            Grid(alignment: .leading, horizontalSpacing: 5, verticalSpacing: 15) {
                 detailRow(title: "Name", value: $cipher.name)
 
                 if let login = cipher.login?.username, !login.isEmpty {
@@ -37,49 +37,59 @@ struct CipherDetailsView: View {
                     ))
                 }
             }
-            .frame(maxHeight: .infinity, alignment: .top)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
+        .padding(.top, 16)
         .navigationTitle(cipher.name)
     }
 
     /// A row displaying a detail with a title and value
     private func detailRow(title: String, value: Binding<String>) -> some View {
-        HStack {
+        GridRow {
             Text("\(title):")
                 .bold()
 
-            Text(value.wrappedValue)
+            Text(value.wrappedValue).lineLimit(1)
+                .truncationMode(.tail).frame(width: 200, alignment: .leading)
 
-            ClipboardButton(data: value.wrappedValue)
-        }
+            ClipboardButton(data: value.wrappedValue).frame(alignment: .trailing)
+        }.frame(maxWidth: .infinity, alignment: .leading)
     }
 
     /// A row displaying the URI with a clickable link
     private func uriRow(uri: String) -> some View {
-        HStack {
+        GridRow {
             Text("URI:")
                 .bold()
-            Link(uri, destination: URL(string: uri) ?? URL(string: "https://")!)
-                .lineLimit(1)
-                .truncationMode(.middle)
-            ClipboardButton(data: uri)
+
+            Link(destination: URL(string: uri) ?? URL(string: "https://")!) {
+                Text(uri).lineLimit(1)
+                    .truncationMode(.tail).frame(width: 200, alignment: .leading)
+            }
+
+            ClipboardButton(data: uri).frame(alignment: .trailing)
         }
         .onHover { _ in
             NSCursor.pointingHand.set()
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     /// A row displaying the password with a toggle for visibility
     private func passwordRow(password: Binding<String>) -> some View {
-        HStack {
+        GridRow {
             Text("Password:")
                 .bold()
 
-            Text(isPasswordVisible ? password.wrappedValue : String(repeating: "•", count: 8))
+            Text(isPasswordVisible ? password.wrappedValue : String(repeating: "•", count: 8)).lineLimit(1)
+                .truncationMode(.tail).frame(width: 200, alignment: .leading)
 
-            ClipboardButton(data: password.wrappedValue)
-            togglePasswordVisibilityButton
+            HStack {
+                ClipboardButton(data: password.wrappedValue)
+                togglePasswordVisibilityButton
+            }.frame(alignment: .trailing)
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     /// A button to toggle the visibility of the password
