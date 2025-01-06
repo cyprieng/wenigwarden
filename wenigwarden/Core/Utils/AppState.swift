@@ -16,6 +16,7 @@ class AppState: ObservableObject {
     var deviceId: String = ""
     var url: String = ""
     var email: String = ""
+    var enableTouchId: Bool = false
 
     /// Private initializer to enforce singleton pattern
     private init() {
@@ -30,5 +31,6 @@ class AppState: ObservableObject {
         UserDefaults.standard.set(url, forKey: "url")
         UserDefaults.standard.set(email, forKey: "email")
         UserDefaults.standard.set(deviceId, forKey: "deviceId")
+        UserDefaults.standard.set(enableTouchId, forKey: "enableTouchId")
     }
 }
