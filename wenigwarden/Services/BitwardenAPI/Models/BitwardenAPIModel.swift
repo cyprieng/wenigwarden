@@ -18,7 +18,8 @@ struct PreloginResponse: Decodable {
 
     /// Initializer for decoding a PreloginResponse
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let caseInsensitiveDecoder = CaseInsensitiveDecoder(decoder)
+        let container = try caseInsensitiveDecoder.container(keyedBy: CodingKeys.self)
         kdfIterations = try container.decode(Int.self, forKey: .kdfIterations)
     }
 }

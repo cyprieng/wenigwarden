@@ -4,97 +4,135 @@
 //
 //  Created by Cyprien Guillemot on 04/01/2025.
 //
+import Foundation
 
-/// A custom decoder that allows for case-insensitive key matching
+// Custom Key Type to handle both string and integer keys
+struct AnyCodingKey: CodingKey {
+    var stringValue: String
+    var intValue: Int?
+
+    // Initialize with a string value
+    init?(stringValue: String) {
+        self.stringValue = stringValue
+        self.intValue = nil
+    }
+
+    // Initialize with an integer value
+    init?(intValue: Int) {
+        self.intValue = intValue
+        self.stringValue = "\(intValue)"
+    }
+}
+
+// CaseInsensitiveDecoder that wraps a standard Decoder and provides case-insensitive key handling
 struct CaseInsensitiveDecoder: Decoder {
-    var codingPath: [any CodingKey]
+    var codingPath: [CodingKey]
     var userInfo: [CodingUserInfoKey: Any]
-    let decoder: Decoder
+    private let decoder: Decoder
 
-    /// Initializes a CaseInsensitiveDecoder
+    // Initialize with a standard decoder
     init(_ decoder: Decoder) {
         self.decoder = decoder
         self.codingPath = decoder.codingPath
         self.userInfo = decoder.userInfo
     }
 
-    /// Returns a keyed decoding container with case-insensitive key matching
+    // Return a case-insensitive keyed decoding container
     func container<Key>(keyedBy type: Key.Type) throws -> KeyedDecodingContainer<Key> where Key: CodingKey {
-        let container = try decoder.container(keyedBy: type)
-        return KeyedDecodingContainer(CaseInsensitiveKeyedDecodingContainer(container))
+        // Get the container using AnyCodingKey
+        let container = try decoder.container(keyedBy: AnyCodingKey.self)
+        // Wrap it in a CaseInsensitiveKeyedDecodingContainer
+        let caseInsensitiveContainer = CaseInsensitiveKeyedDecodingContainer<Key>(container: container)
+        return KeyedDecodingContainer(caseInsensitiveContainer)
     }
 
-    /// Returns an unkeyed decoding container
+    // Return an unkeyed container
     func unkeyedContainer() throws -> UnkeyedDecodingContainer {
         try decoder.unkeyedContainer()
     }
 
-    /// Returns a single value decoding container
+    // Return a single value container
     func singleValueContainer() throws -> SingleValueDecodingContainer {
         try decoder.singleValueContainer()
     }
 }
 
-/// A custom keyed decoding container that allows for case-insensitive key matching
+// Keyed decoding container that performs case-insensitive key lookups
 struct CaseInsensitiveKeyedDecodingContainer<K: CodingKey>: KeyedDecodingContainerProtocol {
-    var codingPath: [CodingKey] { container.codingPath }
-    var allKeys: [K] { container.allKeys }
+    var codingPath: [CodingKey]
+    var allKeys: [K]
 
-    private let container: KeyedDecodingContainer<K>
+    private let container: KeyedDecodingContainer<AnyCodingKey>
+    private var keyMap: [String: AnyCodingKey] = [:]
 
-    /// Initializes a CaseInsensitiveKeyedDecodingContainer
-    init(_ container: KeyedDecodingContainer<K>) {
+    // Initialize with a keyed decoding container
+    init(container: KeyedDecodingContainer<AnyCodingKey>) {
         self.container = container
+        self.codingPath = container.codingPath
+        self.allKeys = []
+        self.populateKeyMap()
     }
 
-    /// Checks if the container contains a key, ignoring case
+    // Populate the key map with lowercased versions of the keys for case-insensitive lookups
+    private mutating func populateKeyMap() {
+        for key in container.allKeys {
+            // Map lowercased key strings to their respective AnyCodingKey
+            keyMap[key.stringValue.lowercased()] = key
+            // Convert AnyCodingKey to the original key type
+            if let newKey = K(stringValue: key.stringValue) {
+                allKeys.append(newKey)
+            }
+        }
+    }
+
+    // Check if the container contains a value for the given key
     func contains(_ key: K) -> Bool {
-        container.contains(key) || container.allKeys.contains {
-            $0.stringValue.lowercased() == key.stringValue.lowercased()
-        }
+        keyMap.keys.contains(key.stringValue.lowercased())
     }
 
-    /// Decodes a nil value for a key
+    // Decode a nil value for the given key
     func decodeNil(forKey key: K) throws -> Bool {
-        try container.decodeNil(forKey: key)
+        if let matchingKey = keyMap[key.stringValue.lowercased()] {
+            return try container.decodeNil(forKey: matchingKey)
+        }
+        return try container.decodeNil(forKey: AnyCodingKey(stringValue: key.stringValue)!)
     }
 
-    /// Decodes a value for a key, ignoring case
+    // Decode a value of the specified type for the given key
     func decode<T>(_ type: T.Type, forKey key: K) throws -> T where T: Decodable {
-        if let value = try? container.decode(type, forKey: key) {
-            return value
+        if let matchingKey = keyMap[key.stringValue.lowercased()] {
+            return try container.decode(type, forKey: matchingKey)
         }
-
-        guard let matchingKey = container.allKeys.first(where: {
-            $0.stringValue.lowercased() == key.stringValue.lowercased()
-        }) else {
-            throw DecodingError.keyNotFound(
-                key,
-                DecodingError.Context(codingPath: codingPath,
-                                      debugDescription: "No value associated with key \(key.stringValue)"))
-        }
-
-        return try container.decode(type, forKey: matchingKey)
+        return try container.decode(type, forKey: AnyCodingKey(stringValue: key.stringValue)!)
     }
 
-    /// Returns a nested keyed decoding container for a key
+    // Decode a nested container for the given key
     func nestedContainer<NestedKey>(keyedBy type: NestedKey.Type, forKey key: K)
     throws -> KeyedDecodingContainer<NestedKey> where NestedKey: CodingKey {
-        try container.nestedContainer(keyedBy: type, forKey: key)
+        if let matchingKey = keyMap[key.stringValue.lowercased()] {
+            return try container.nestedContainer(keyedBy: type, forKey: matchingKey)
+        }
+        return try container.nestedContainer(keyedBy: type, forKey: AnyCodingKey(stringValue: key.stringValue)!)
     }
 
-    /// Returns a nested unkeyed decoding container for a key
+    // Decode a nested unkeyed container for the given key
     func nestedUnkeyedContainer(forKey key: K) throws -> UnkeyedDecodingContainer {
-        try container.nestedUnkeyedContainer(forKey: key)
+        if let matchingKey = keyMap[key.stringValue.lowercased()] {
+            return try container.nestedUnkeyedContainer(forKey: matchingKey)
+        }
+        return try container.nestedUnkeyedContainer(forKey: AnyCodingKey(stringValue: key.stringValue)!)
     }
 
-    /// Returns a super decoder
+    // Return a decoder for super (parent) data
     func superDecoder() throws -> Decoder {
-        try container.superDecoder()
+        return try container.superDecoder()
     }
 
-    /// Returns a super decoder for a key
+    // Return a decoder for super (parent) data for the given key
     func superDecoder(forKey key: K) throws -> Decoder {
-        try container.superDecoder(forKey: key)
+        if let matchingKey = keyMap[key.stringValue.lowercased()] {
+            return try container.superDecoder(forKey: matchingKey)
+        }
+        return try container.superDecoder(forKey: AnyCodingKey(stringValue: key.stringValue)!)
     }
 }

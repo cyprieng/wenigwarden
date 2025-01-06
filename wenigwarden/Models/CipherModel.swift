@@ -39,7 +39,8 @@ struct CipherModel: Codable, Identifiable {
 
     /// Initializer for decoding a cipher model
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let caseInsensitiveDecoder = CaseInsensitiveDecoder(decoder)
+        let container = try caseInsensitiveDecoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
         name = try container.decode(String.self, forKey: .name)
         login = try? container.decode(Login.self, forKey: .login)

@@ -26,7 +26,8 @@ struct VaultModel: Codable {
 
     /// Initializer for decoding a vault model
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let caseInsensitiveDecoder = CaseInsensitiveDecoder(decoder)
+        let container = try caseInsensitiveDecoder.container(keyedBy: CodingKeys.self)
         ciphers = try container.decode([CipherModel].self, forKey: .ciphers)
         profile = try container.decode(Profile.self, forKey: .profile)
     }
@@ -60,7 +61,8 @@ struct Login: Codable {
 
     /// Initializer for decoding a login model
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let caseInsensitiveDecoder = CaseInsensitiveDecoder(decoder)
+        let container = try caseInsensitiveDecoder.container(keyedBy: CodingKeys.self)
         username = try? container.decode(String.self, forKey: .username)
         password = try? container.decode(String.self, forKey: .password)
         totp = try? container.decode(String.self, forKey: .totp)
@@ -85,7 +87,8 @@ struct Uris: Codable {
 
     /// Initializer for decoding a URI model
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let caseInsensitiveDecoder = CaseInsensitiveDecoder(decoder)
+        let container = try caseInsensitiveDecoder.container(keyedBy: CodingKeys.self)
         uri = try container.decode(String.self, forKey: .uri)
     }
 }
@@ -106,7 +109,8 @@ struct Profile: Codable {
 
     /// Initializer for decoding a profile model
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let caseInsensitiveDecoder = CaseInsensitiveDecoder(decoder)
+        let container = try caseInsensitiveDecoder.container(keyedBy: CodingKeys.self)
         organizations = try container.decode([Organization].self, forKey: .organizations)
     }
 }
@@ -130,7 +134,8 @@ struct Organization: Codable {
 
     /// Initializer for decoding an organization model
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let caseInsensitiveDecoder = CaseInsensitiveDecoder(decoder)
+        let container = try caseInsensitiveDecoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
         key = try container.decode(String.self, forKey: .key)
     }
