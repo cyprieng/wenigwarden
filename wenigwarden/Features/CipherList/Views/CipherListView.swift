@@ -14,8 +14,21 @@ struct CipherListView: View {
     var body: some View {
         NavigationStack {
             VStack {
-                // Search field
-                searchField
+                HStack {
+                    // Search field
+                    searchField
+
+                    // Settings link
+                    NavigationLink(destination: SettingsView().onAppear {
+                        // Remove the min height when going to cipher details
+                        viewModel.minHeight = nil
+                    }.onDisappear {
+                        // Re apply the min height when going back to the list
+                        viewModel.minHeight = defaultMinHeight
+                    }) {
+                        Image(systemName: "gear")
+                    }
+                }
 
                 // List of ciphers
                 cipherList
