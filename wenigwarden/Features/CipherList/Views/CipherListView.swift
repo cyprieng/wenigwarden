@@ -37,18 +37,18 @@ struct CipherListView: View {
     /// The list of ciphers
     private var cipherList: some View {
         List(viewModel.ciphers ?? []) { cipher in
-            VStack(alignment: .leading) {
-                NavigationLink(
-                    destination: CipherDetailsView(cipher: cipher)
-                ) {
-                    CipherListItemView(cipher: cipher)
+            NavigationLink(
+                destination: CipherDetailsView(cipher: cipher).onAppear {
+                    // Remove the min height when going to cipher details
+                    viewModel.minHeight = nil
+                }.onDisappear {
+                    // Re apply the min height when going back to the list
+                    viewModel.minHeight = defaultMinHeight
                 }
-
-                Divider()
-                    .background(Color.gray.opacity(0.4))
+            ) {
+                CipherListItemView(cipher: cipher)
             }
-            .listRowSeparator(.hidden)
-
-        }
+            .listRowSeparatorTint(.gray)
+        }.frame(minHeight: viewModel.minHeight)
     }
 }

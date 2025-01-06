@@ -7,6 +7,9 @@
 
 import Foundation
 
+// Default height for the list
+let defaultMinHeight: CGFloat = 400
+
 /// ViewModel for managing the list of ciphers
 class CipherListViewModel: ObservableObject {
     /// The list of ciphers to display
@@ -14,6 +17,9 @@ class CipherListViewModel: ObservableObject {
 
     /// The search query entered by the user
     @Published var searchQuery = ""
+
+    // Min height for the view
+    @Published var minHeight: CGFloat? = defaultMinHeight
 
     /// Loads the initial list of ciphers when the view appears
     public func loadInitialCiphers() {
