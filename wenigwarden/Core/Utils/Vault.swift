@@ -56,6 +56,29 @@ class Vault: ObservableObject {
         self.loadFromKeychain()
     }
 
+    /// Set password in keychain for touchid
+    public func setTouchIdPassword(_ password: String) {
+        // Always remove first as override cause issue
+        try? keychain.remove("touchidpassword")
+
+        DispatchQueue.global().async {
+            do {
+                // Store in keychain
+                try self.keychain
+                    .accessibility(.whenUnlocked, authenticationPolicy: [.biometryAny])
+                    .authenticationPrompt("Authenticate to update your password")
+                    .set(password, key: "touchidpassword")
+            } catch {}
+        }
+    }
+
+    /// Get password from touchid keychain
+    public func getTouchIdPassword() -> String? {
+        return try? Vault.shared.keychain
+            .authenticationPrompt("Authenticate to get your password")
+            .get("touchidpassword") as String?
+    }
+
     /// Loads data from the keychain
     private func loadFromKeychain() {
         let ciphers = try? keychain.getData("ciphers")

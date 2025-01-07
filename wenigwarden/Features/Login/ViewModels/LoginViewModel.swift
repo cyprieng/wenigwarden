@@ -23,9 +23,19 @@ class LoginViewModel: ObservableObject {
     }
 
     /// Loads initial values from AppState
+    @MainActor
     func loadInitialValues() {
         url = AppState.shared.url
         email = AppState.shared.email
+
+        // Login with touch id if enabled
+        if AppState.shared.enableTouchId {
+            let password = Vault.shared.getTouchIdPassword()
+            if password != nil {
+                self.password = password!
+                self.submitForm()
+            }
+        }
     }
 
     /// Submits the login form

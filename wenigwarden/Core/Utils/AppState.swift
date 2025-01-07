@@ -24,6 +24,7 @@ class AppState: ObservableObject {
         deviceId = UserDefaults.standard.string(forKey: "deviceId") ?? UUID().uuidString
         url = UserDefaults.standard.string(forKey: "url") ?? "https://bitwarden.com"
         email = UserDefaults.standard.string(forKey: "email") ?? ""
+        enableTouchId = UserDefaults.standard.bool(forKey: "enableTouchId")
     }
 
     /// Persists the current state to UserDefaults
