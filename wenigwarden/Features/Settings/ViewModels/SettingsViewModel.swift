@@ -26,7 +26,7 @@ class SettingsViewModel: ObservableObject {
         if enableTouchId && !AppState.shared.enableTouchId {
             // Ask for password to enable touchid
             showPasswordInput = true
-        } else {
+        } else if !enableTouchId {
             // Disable touchid
             showPasswordInput = false
             AppState.shared.enableTouchId = false
