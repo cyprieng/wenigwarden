@@ -6,6 +6,9 @@
 //
 
 import Foundation
+import SwiftUICore
+import KeyboardShortcuts
+import AppKit
 
 /// A class that manages the app's state and user data
 class AppState: ObservableObject {
@@ -25,6 +28,13 @@ class AppState: ObservableObject {
         url = UserDefaults.standard.string(forKey: "url") ?? "https://bitwarden.com"
         email = UserDefaults.standard.string(forKey: "email") ?? ""
         enableTouchId = UserDefaults.standard.bool(forKey: "enableTouchId")
+
+        // Keyboard event to trigger menu extra opening
+        KeyboardShortcuts.onKeyUp(for: .toggleMenu) { [self] in
+            for window in NSApplication.shared.windows {
+                (window.value(forKey: "statusItem")as? NSStatusItem)?.button?.performClick(nil)
+            }
+        }
     }
 
     /// Persists the current state to UserDefaults

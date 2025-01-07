@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import KeyboardShortcuts
 
 /// The settings view
 struct SettingsView: View {
@@ -40,6 +41,11 @@ struct SettingsView: View {
                     .modifier(ShakeEffect(shakes: viewModel.shakeTouchIdButton ? 2 : 0))
                     .animation(.default, value: viewModel.shakeTouchIdButton)
                 }
+            }
+
+            // Shortcut setting
+            Form {
+                KeyboardShortcuts.Recorder("Toggle menu:", name: .toggleMenu)
             }
         }.padding(.vertical, 16)
         .navigationTitle("Settings")

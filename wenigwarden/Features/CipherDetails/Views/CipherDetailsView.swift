@@ -15,7 +15,6 @@ struct CipherDetailsView: View {
     @State var isPasswordVisible: Bool = false
 
     var body: some View {
-        ScrollView {
             Grid(alignment: .leading, horizontalSpacing: 5, verticalSpacing: 15) {
                 detailRow(title: "Name", value: $cipher.name)
 
@@ -38,10 +37,9 @@ struct CipherDetailsView: View {
                 }
             }
             .frame(maxWidth: .infinity, alignment: .leading)
+            .padding(.top, 16)
+            .navigationTitle(cipher.name)
         }
-        .padding(.top, 16)
-        .navigationTitle(cipher.name)
-    }
 
     /// A row displaying a detail with a title and value
     private func detailRow(title: String, value: Binding<String>) -> some View {
