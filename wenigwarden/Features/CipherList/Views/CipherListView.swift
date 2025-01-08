@@ -10,7 +10,7 @@ import SwiftUI
 /// A view representing the list of ciphers
 struct CipherListView: View {
     @ObservedObject var viewModel = CipherListViewModel()
-    
+
     @FocusState private var isSearchFieldFocused: Bool
 
     var body: some View {
@@ -49,7 +49,9 @@ struct CipherListView: View {
             .padding()
             .focused($isSearchFieldFocused)
             .onAppear {
-                isSearchFieldFocused = true
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
+                    isSearchFieldFocused = true
+                }
             }
     }
 

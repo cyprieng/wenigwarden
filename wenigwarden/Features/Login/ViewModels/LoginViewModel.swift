@@ -29,7 +29,7 @@ class LoginViewModel: ObservableObject {
         email = AppState.shared.email
 
         // Login with touch id if enabled
-        Task{
+        Task {
             if AppState.shared.enableTouchId {
                 let password = Vault.shared.getTouchIdPassword()
                 if password != nil {

@@ -15,31 +15,31 @@ struct CipherDetailsView: View {
     @State var isPasswordVisible: Bool = false
 
     var body: some View {
-            Grid(alignment: .leading, horizontalSpacing: 5, verticalSpacing: 15) {
-                detailRow(title: "Name", value: $cipher.name)
+        Grid(alignment: .leading, horizontalSpacing: 5, verticalSpacing: 15) {
+            detailRow(title: "Name", value: $cipher.name)
 
-                if let login = cipher.login?.username, !login.isEmpty {
-                    detailRow(title: "Login", value: Binding(
-                        get: { cipher.login?.username ?? "" },
-                        set: { newValue in cipher.login?.username = newValue }
-                    ))
-                }
-
-                if let uri = cipher.login?.uri, !uri.isEmpty {
-                    uriRow(uri: cipher.login!.uri!)
-                }
-
-                if let password = cipher.login?.password, !password.isEmpty {
-                    passwordRow(password: Binding(
-                        get: { cipher.login?.password ?? "" },
-                        set: { newValue in cipher.login?.password = newValue }
-                    ))
-                }
+            if let login = cipher.login?.username, !login.isEmpty {
+                detailRow(title: "Login", value: Binding(
+                    get: { cipher.login?.username ?? "" },
+                    set: { newValue in cipher.login?.username = newValue }
+                ))
             }
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.top, 16)
-            .navigationTitle(cipher.name)
+
+            if let uri = cipher.login?.uri, !uri.isEmpty {
+                uriRow(uri: cipher.login!.uri!)
+            }
+
+            if let password = cipher.login?.password, !password.isEmpty {
+                passwordRow(password: Binding(
+                    get: { cipher.login?.password ?? "" },
+                    set: { newValue in cipher.login?.password = newValue }
+                ))
+            }
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.top, 16)
+        .navigationTitle(cipher.name)
+    }
 
     /// A row displaying a detail with a title and value
     private func detailRow(title: String, value: Binding<String>) -> some View {

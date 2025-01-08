@@ -30,7 +30,7 @@ class AppState: ObservableObject {
         enableTouchId = UserDefaults.standard.bool(forKey: "enableTouchId")
 
         // Keyboard event to trigger menu extra opening
-        KeyboardShortcuts.onKeyUp(for: .toggleMenu) { [self] in
+        KeyboardShortcuts.onKeyUp(for: .toggleMenu) {
             for window in NSApplication.shared.windows {
                 (window.value(forKey: "statusItem")as? NSStatusItem)?.button?.performClick(nil)
             }
