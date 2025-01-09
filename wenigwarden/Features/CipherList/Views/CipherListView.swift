@@ -11,10 +11,11 @@ import SwiftUI
 struct CipherListView: View {
     @ObservedObject var viewModel = CipherListViewModel()
 
-    @FocusState private var isSearchFieldFocused: Bool
+    /// Search field focus state
+    @FocusState var isSearchFieldFocused: Bool
 
     var body: some View {
-        NavigationStack {
+        NavigationStack(path: $viewModel.path) {
             VStack {
                 HStack {
                     // Search field
@@ -22,11 +23,9 @@ struct CipherListView: View {
 
                     // Settings link
                     NavigationLink(destination: SettingsView().onAppear {
-                        // Remove the min height when going to cipher details
-                        viewModel.minHeight = nil
+                        viewModel.onDisappear()
                     }.onDisappear {
-                        // Re apply the min height when going back to the list
-                        viewModel.minHeight = defaultMinHeight
+                        viewModel.onGoToList()
                     }) {
                         Image(systemName: "gear")
                     }
@@ -34,6 +33,9 @@ struct CipherListView: View {
 
                 // List of ciphers
                 cipherList
+            }.navigationDestination(for: CipherDetailsView.self) { detailView in
+                // Link for cipher details
+                detailView
             }
         }
         .onAppear(perform: viewModel.loadInitialCiphers)
@@ -46,30 +48,45 @@ struct CipherListView: View {
             .onChange(of: viewModel.searchQuery) { _, newValue in
                 viewModel.performSearch(newValue)
             }
-            .padding()
-            .focused($isSearchFieldFocused)
-            .onAppear {
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.7) {
-                    isSearchFieldFocused = true
-                }
+            .onChange(of: viewModel.isSearchFieldFocused, initial: true) { _, newValue in
+                isSearchFieldFocused = newValue
             }
+            .onChange(of: isSearchFieldFocused, initial: true) { _, newValue in
+                viewModel.isSearchFieldFocused = newValue
+            }
+            .focused($isSearchFieldFocused)
     }
 
     /// The list of ciphers
     private var cipherList: some View {
-        List(viewModel.ciphers ?? []) { cipher in
-            NavigationLink(
-                destination: CipherDetailsView(cipher: cipher).onAppear {
-                    // Remove the min height when going to cipher details
-                    viewModel.minHeight = nil
-                }.onDisappear {
-                    // Re apply the min height when going back to the list
-                    viewModel.minHeight = defaultMinHeight
+        ScrollViewReader { proxy in
+            List(selection: $viewModel.focusedCipherIndex) {
+                ForEach((viewModel.ciphers ?? []).indices, id: \.self) { index in
+                    let cipher = viewModel.ciphers![index]
+                    CipherListItemView(cipher: cipher)
+                        .tag(index)
+                        .listRowSeparatorTint(.gray)
+                        .gesture(TapGesture().onEnded {
+                            // Click to go to details
+                            viewModel.goToDetails(cipher)
+                        })
                 }
-            ) {
-                CipherListItemView(cipher: cipher)
             }
-            .listRowSeparatorTint(.gray)
-        }.frame(minHeight: viewModel.minHeight)
+            .frame(minHeight: viewModel.minHeight)
+            .onAppear {
+                viewModel.onGoToList()
+            }
+            .onDisappear {
+                viewModel.onDisappear()
+            }
+            .onChange(of: viewModel.focusedCipherIndex, initial: true) { _, target in
+                // Scroll to currently selected item
+                if let target = target {
+                    withAnimation {
+                        proxy.scrollTo(target, anchor: .center)
+                    }
+                }
+            }
+        }
     }
 }

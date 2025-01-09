@@ -8,7 +8,17 @@
 import SwiftUI
 
 /// A view representing the details of a cipher
-struct CipherDetailsView: View {
+struct CipherDetailsView: View, Hashable {
+    /// Check equality
+    static func == (lhs: CipherDetailsView, rhs: CipherDetailsView) -> Bool {
+        lhs.cipher.id == rhs.cipher.id
+    }
+
+    /// Get hash
+    func hash(into hasher: inout Hasher) {
+        hasher.combine(cipher.id)
+    }
+
     @State
     var cipher: CipherModel
 
