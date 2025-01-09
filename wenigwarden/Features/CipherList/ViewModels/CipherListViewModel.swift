@@ -65,7 +65,9 @@ class CipherListViewModel: ObservableObject {
 
     /// When list appear
     public func onGoToList() {
-        minHeight = defaultMinHeight // Reset height
+        if path.count == 0 {
+            minHeight = defaultMinHeight // Reset height
+        }
         focusedCipherIndex = CipherListViewModel.staticFocusedCipherIndex  // Reset selected cipher
 
         // Keyboard shortcuts

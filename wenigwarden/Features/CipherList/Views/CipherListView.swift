@@ -66,13 +66,13 @@ struct CipherListView: View {
                     CipherListItemView(cipher: Binding(
                         get: { return cipher},
                         set: { _ in }
-                      ))
-                        .tag(index)
-                        .listRowSeparatorTint(.gray)
-                        .gesture(TapGesture().onEnded {
-                            // Click to go to details
-                            viewModel.goToDetails(cipher)
-                        })
+                    ))
+                    .tag(index)
+                    .listRowSeparatorTint(.gray)
+                    .gesture(TapGesture().onEnded {
+                        // Click to go to details
+                        viewModel.goToDetails(cipher)
+                    })
                 }
             }
             .frame(minHeight: viewModel.minHeight)

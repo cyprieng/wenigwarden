@@ -18,7 +18,7 @@ struct CipherListItemView: View {
             itemDetails
         }
         .padding(5)
-        .onChange(of: cipher.id, initial: true){ _,_  in
+        .onChange(of: cipher.id, initial: true) { _, _  in
             loadFavicon()
         }
     }
