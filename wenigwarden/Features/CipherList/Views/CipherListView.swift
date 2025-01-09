@@ -63,7 +63,10 @@ struct CipherListView: View {
             List(selection: $viewModel.focusedCipherIndex) {
                 ForEach((viewModel.ciphers ?? []).indices, id: \.self) { index in
                     let cipher = viewModel.ciphers![index]
-                    CipherListItemView(cipher: cipher)
+                    CipherListItemView(cipher: Binding(
+                        get: { return cipher},
+                        set: { _ in }
+                      ))
                         .tag(index)
                         .listRowSeparatorTint(.gray)
                         .gesture(TapGesture().onEnded {

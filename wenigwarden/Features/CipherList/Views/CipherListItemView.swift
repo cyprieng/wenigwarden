@@ -9,14 +9,8 @@ import SwiftUI
 
 /// A view representing an item in the list of ciphers
 struct CipherListItemView: View {
-    @State private var cipher: CipherModel
+    @Binding var cipher: CipherModel
     @State private var faviconImage: Image?
-
-    /// Initializes the view with a cipher model
-    /// - Parameter cipher: The cipher model to display
-    init(cipher: CipherModel) {
-        _cipher = State(initialValue: cipher)
-    }
 
     var body: some View {
         HStack {
@@ -24,7 +18,7 @@ struct CipherListItemView: View {
             itemDetails
         }
         .padding(5)
-        .onAppear {
+        .onChange(of: cipher.id, initial: true){ _,_  in
             loadFavicon()
         }
     }
