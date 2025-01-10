@@ -11,11 +11,20 @@ import SwiftUI
 struct CipherListItemView: View {
     @Binding var cipher: CipherModel
     @State private var faviconImage: Image?
+    var goToDetails: () -> Void
 
     var body: some View {
         HStack {
             faviconImageView
             itemDetails
+
+            Spacer()
+
+            Button(action: {
+                goToDetails()
+            }, label: {
+                Image(systemName: "note.text")
+            })
         }
         .padding(5)
         .onChange(of: cipher.id, initial: true) { _, _  in
