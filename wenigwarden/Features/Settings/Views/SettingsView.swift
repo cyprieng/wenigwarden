@@ -9,7 +9,7 @@ import SwiftUI
 import KeyboardShortcuts
 
 /// The settings view
-struct SettingsView: View {
+struct SettingsView: View, Hashable {
     @StateObject var viewModel = SettingsViewModel()
 
     var body: some View {
@@ -51,5 +51,15 @@ struct SettingsView: View {
         .navigationTitle("Settings")
         .frame(alignment: .leading)
         .onAppear(perform: viewModel.loadInitialState)
+    }
+
+    // Always equal
+    static func == (lhs: SettingsView, rhs: SettingsView) -> Bool {
+        return true
+    }
+
+    /// Staic hash
+    func hash(into hasher: inout Hasher) {
+        hasher.combine("settings")
     }
 }

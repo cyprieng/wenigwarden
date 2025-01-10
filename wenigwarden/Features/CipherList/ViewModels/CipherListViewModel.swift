@@ -58,9 +58,10 @@ class CipherListViewModel: ObservableObject {
         path.append(CipherDetailsView(cipher: cipher))
     }
 
-    /// When List disappear
-    public func onDisappear() {
+    /// Go to cipher details
+    public func goToSettings() {
         minHeight = nil
+        path.append(SettingsView())
     }
 
     /// When list appear

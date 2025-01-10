@@ -22,18 +22,20 @@ struct CipherListView: View {
                     searchField
 
                     // Settings link
-                    NavigationLink(destination: SettingsView().onAppear {
-                        viewModel.onDisappear()
-                    }.onDisappear {
-                        viewModel.onGoToList()
-                    }) {
+                    Button(action: {
+                        viewModel.goToSettings()
+                    }, label: {
                         Image(systemName: "gear")
-                    }
+                    })
                 }
 
                 // List of ciphers
                 cipherList
-            }.navigationDestination(for: CipherDetailsView.self) { detailView in
+            }.navigationDestination(for: SettingsView.self) { settingsView in
+                // Link for settings
+                settingsView
+            }
+            .navigationDestination(for: CipherDetailsView.self) { detailView in
                 // Link for cipher details
                 detailView
             }
@@ -74,9 +76,6 @@ struct CipherListView: View {
             .frame(minHeight: viewModel.minHeight)
             .onAppear {
                 viewModel.onGoToList()
-            }
-            .onDisappear {
-                viewModel.onDisappear()
             }
             .onChange(of: viewModel.focusedCipherIndex, initial: true) { _, target in
                 // Scroll to currently selected item
