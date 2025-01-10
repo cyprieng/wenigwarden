@@ -27,19 +27,19 @@ struct CipherDetailsView: View, Hashable {
     var body: some View {
         Grid(alignment: .leading, horizontalSpacing: 5, verticalSpacing: 15) {
             // Name
-            detailRow(title: "Name", value: $cipher.name)
+            detailRow(title: "Name", value: $cipher.name, copyKeyCode: "n")
 
             // Login
             if let login = cipher.login?.username, !login.isEmpty {
                 detailRow(title: "Login", value: Binding(
                     get: { cipher.login?.username ?? "" },
                     set: { newValue in cipher.login?.username = newValue }
-                ))
+                ), copyKeyCode: "l")
             }
 
             // URI
             if let uri = cipher.login?.uri, !uri.isEmpty {
-                uriRow(uri: cipher.login!.uri!)
+                uriRow(uri: cipher.login!.uri!, copyKeyCode: "u")
             }
 
             // Password
@@ -47,7 +47,7 @@ struct CipherDetailsView: View, Hashable {
                 passwordRow(password: Binding(
                     get: { cipher.login?.password ?? "" },
                     set: { newValue in cipher.login?.password = newValue }
-                ))
+                ), copyKeyCode: "p")
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -70,18 +70,18 @@ struct CipherDetailsView: View, Hashable {
     }
 
     /// A row displaying a detail with a title and value
-    private func detailRow(title: String, value: Binding<String>) -> some View {
+    private func detailRow(title: String, value: Binding<String>, copyKeyCode: String? = nil) -> some View {
         GridRow {
             textLabel(title)
 
             textValue(value.wrappedValue)
 
-            ClipboardButton(data: value.wrappedValue)
+            ClipboardButton(data: value.wrappedValue, copyKeyCode: copyKeyCode)
         }
     }
 
     /// A row displaying the URI with a clickable link
-    private func uriRow(uri: String) -> some View {
+    private func uriRow(uri: String, copyKeyCode: String? = nil) -> some View {
         GridRow {
             textLabel("URI")
 
@@ -91,19 +91,19 @@ struct CipherDetailsView: View, Hashable {
                 NSCursor.pointingHand.set()
             }
 
-            ClipboardButton(data: uri)
+            ClipboardButton(data: uri, copyKeyCode: copyKeyCode)
         }
     }
 
     /// A row displaying the password with a toggle for visibility
-    private func passwordRow(password: Binding<String>) -> some View {
+    private func passwordRow(password: Binding<String>, copyKeyCode: String? = nil) -> some View {
         GridRow {
             textLabel("Password")
 
             textValue(isPasswordVisible ? password.wrappedValue : String(repeating: "•", count: 8))
 
             HStack {
-                ClipboardButton(data: password.wrappedValue)
+                ClipboardButton(data: password.wrappedValue, copyKeyCode: copyKeyCode)
                 togglePasswordVisibilityButton
             }
         }

@@ -75,27 +75,29 @@ class CipherListViewModel: ObservableObject {
             CipherListViewModel.isEventAdded = true
             NSEvent.addLocalMonitorForEvents(matching: [.keyDown]) { [self] nsevent in
                 if CipherListViewModel.staticFocusedCipherIndex != nil {
-                    if nsevent.keyCode == 125 { // arrow down -> move selection dozn
-                        CipherListViewModel.staticFocusedCipherIndex = CipherListViewModel.staticFocusedCipherIndex!
-                            < ciphers!.count ?
-                            CipherListViewModel.staticFocusedCipherIndex! + 1 : 0
-                    } else if nsevent.keyCode == 126 { // arrow up -> move selection up
-                        CipherListViewModel.staticFocusedCipherIndex = CipherListViewModel.staticFocusedCipherIndex!
-                            > 1 ? CipherListViewModel.staticFocusedCipherIndex! - 1 : 0
-                    } else if nsevent.keyCode == 36 { // enter -> go to details
-                        goToDetails(ciphers![CipherListViewModel.staticFocusedCipherIndex!])
-                    } else if nsevent.keyCode == 53 { // escape -> go back
-                        if path.count > 0 {
-                            path.removeLast()
-                        } else {
+                    if path.isEmpty {
+                        if nsevent.keyCode == 125 { // arrow down -> move selection dozn
+                            CipherListViewModel.staticFocusedCipherIndex = CipherListViewModel.staticFocusedCipherIndex!
+                                < ciphers!.count ?
+                                CipherListViewModel.staticFocusedCipherIndex! + 1 : 0
+                        } else if nsevent.keyCode == 126 { // arrow up -> move selection up
+                            CipherListViewModel.staticFocusedCipherIndex = CipherListViewModel.staticFocusedCipherIndex!
+                                > 1 ? CipherListViewModel.staticFocusedCipherIndex! - 1 : 0
+                        } else if nsevent.keyCode == 36 { // enter -> go to details
+                            goToDetails(ciphers![CipherListViewModel.staticFocusedCipherIndex!])
+                        } else if nsevent.keyCode == 53 { // escape -> go back
                             AppState.shared.toggleAppVisibility()
+                        } else {  // Otherwise -> bring back focus to search field if we are on the list
+                            isSearchFieldFocused = true
                         }
-                    } else if path.isEmpty {  // Otherwise -> bring back focus to search field if we are on the list
-                        isSearchFieldFocused = true
-                    }
 
-                    // Set focused cipher
-                    focusedCipherIndex = CipherListViewModel.staticFocusedCipherIndex
+                        // Set focused cipher
+                        focusedCipherIndex = CipherListViewModel.staticFocusedCipherIndex
+                    } else {
+                        if nsevent.keyCode == 53 { // escape -> go back
+                            path.removeLast()
+                        }
+                    }
                 }
 
                 return nsevent
