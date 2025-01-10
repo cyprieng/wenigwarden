@@ -87,6 +87,8 @@ class CipherListViewModel: ObservableObject {
                     } else if nsevent.keyCode == 53 { // escape -> go back
                         if path.count > 0 {
                             path.removeLast()
+                        } else {
+                            AppState.shared.toggleAppVisibility()
                         }
                     } else if path.isEmpty {  // Otherwise -> bring back focus to search field if we are on the list
                         isSearchFieldFocused = true

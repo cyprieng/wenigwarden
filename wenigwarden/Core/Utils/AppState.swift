@@ -31,9 +31,14 @@ class AppState: ObservableObject {
 
         // Keyboard event to trigger menu extra opening
         KeyboardShortcuts.onKeyUp(for: .toggleMenu) {
-            for window in NSApplication.shared.windows {
-                (window.value(forKey: "statusItem")as? NSStatusItem)?.button?.performClick(nil)
-            }
+            self.toggleAppVisibility()
+        }
+    }
+
+    /// Toggle app visibility
+    public func toggleAppVisibility() {
+        for window in NSApplication.shared.windows {
+            (window.value(forKey: "statusItem")as? NSStatusItem)?.button?.performClick(nil)
         }
     }
 
