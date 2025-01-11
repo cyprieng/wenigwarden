@@ -149,6 +149,19 @@ class Vault: ObservableObject {
 
         keychain[data: "ciphers"] = ciphersJSON
         keychain[data: "profile"] = profileJSON
+
+        // Save sync date
+        AppState.shared.lastVaultSync = Date()
+        AppState.shared.persist()
+    }
+
+    /// Update the vaule by syncing and unlocking it
+    public func updateVault() async throws {
+        // Synchronize the vault
+        try await sync()
+
+        // Unlock the vault with the master key
+        try await unlock()
     }
 
     /// Sets the encrypted keys and KDF iterations
@@ -169,6 +182,11 @@ class Vault: ObservableObject {
         self.logged = true
     }
 
+    /// Unlocks the vault using the current encryption key
+    public func unlock() async throws {
+        return try await self.unlock(masterKey: self.masterKey!)
+    }
+
     /// Unlocks the vault using the user's password
     /// - Parameter password: The user's password
     public func unlock(password: String) async throws {
@@ -180,6 +198,7 @@ class Vault: ObservableObject {
     /// Unlocks the vault using the master key
     /// - Parameter masterKey: The master key
     public func unlock(masterKey: Data) async throws {
+        self.masterKey = masterKey
         self.encKey = try decrypt(encKey: [UInt8](masterKey), str: encryptedEncKey!)
 
         // Enc key empty -> master key is invalid

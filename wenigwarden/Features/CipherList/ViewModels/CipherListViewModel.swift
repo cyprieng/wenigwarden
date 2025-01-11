@@ -38,6 +38,7 @@ class CipherListViewModel: ObservableObject {
     private static var isEventAdded = false
 
     /// Loads the initial list of ciphers when the view appears
+    @MainActor
     public func loadInitialCiphers() {
         ciphers = Vault.shared.ciphersDecrypted
     }
@@ -61,7 +62,11 @@ class CipherListViewModel: ObservableObject {
     /// Go to cipher details
     public func goToSettings() {
         minHeight = nil
-        path.append(SettingsView())
+        path.append(SettingsView(refreshList: {
+            Task {
+                await self.loadInitialCiphers()
+            }
+        }))
     }
 
     /// When list appear

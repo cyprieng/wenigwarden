@@ -20,6 +20,7 @@ class AppState: ObservableObject {
     var url: String = ""
     var email: String = ""
     var enableTouchId: Bool = false
+    var lastVaultSync: Date?
 
     /// Private initializer to enforce singleton pattern
     private init() {
@@ -28,6 +29,7 @@ class AppState: ObservableObject {
         url = UserDefaults.standard.string(forKey: "url") ?? "https://bitwarden.com"
         email = UserDefaults.standard.string(forKey: "email") ?? ""
         enableTouchId = UserDefaults.standard.bool(forKey: "enableTouchId")
+        lastVaultSync = UserDefaults.standard.object(forKey: "lastVaultSync") as? Date
 
         // Keyboard event to trigger menu extra opening
         KeyboardShortcuts.onKeyUp(for: .toggleMenu) {
@@ -48,5 +50,6 @@ class AppState: ObservableObject {
         UserDefaults.standard.set(email, forKey: "email")
         UserDefaults.standard.set(deviceId, forKey: "deviceId")
         UserDefaults.standard.set(enableTouchId, forKey: "enableTouchId")
+        UserDefaults.standard.set(lastVaultSync, forKey: "lastVaultSync")
     }
 }

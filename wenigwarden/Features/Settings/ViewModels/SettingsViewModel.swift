@@ -13,12 +13,22 @@ class SettingsViewModel: ObservableObject {
     @Published public var enableTouchId: Bool = false
     @Published public var showPasswordInput: Bool = false
     @Published public var password: String = ""
-    @Published var shakeTouchIdButton: Bool = false
-    @Published var isLoadingTouchId = false
+    @Published public var shakeTouchIdButton: Bool = false
+    @Published public var isLoadingTouchId = false
+
+    @Published public var lastVaultSync: String?
 
     /// Load inital value from AppState
+    @MainActor
     public func loadInitialState() {
         enableTouchId = AppState.shared.enableTouchId
+
+        // Load last sync date
+        if let date = AppState.shared.lastVaultSync {
+            let df = DateFormatter()
+            df.dateFormat = "yyyy-MM-dd HH:mm:ss"
+            lastVaultSync = df.string(from: date)
+        }
     }
 
     /// Handle event when touch id value change
@@ -63,6 +73,15 @@ class SettingsViewModel: ObservableObject {
                 try? await Task.sleep(for: .milliseconds(250))
                 shakeTouchIdButton = false
             }
+        }
+    }
+
+    /// Sync the vaule
+    public func syncVault(_ refreshList: @escaping () -> Void) {
+        Task {
+            try await Vault.shared.updateVault()
+            await self.loadInitialState()
+            refreshList()
         }
     }
 }

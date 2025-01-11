@@ -11,6 +11,7 @@ import KeyboardShortcuts
 /// The settings view
 struct SettingsView: View, Hashable {
     @StateObject var viewModel = SettingsViewModel()
+    var refreshList: () -> Void
 
     var body: some View {
         VStack {
@@ -46,6 +47,15 @@ struct SettingsView: View, Hashable {
             // Shortcut setting
             Form {
                 KeyboardShortcuts.Recorder("Toggle menu:", name: .toggleMenu)
+            }
+
+            // Sync
+            if viewModel.lastVaultSync != nil {
+                Text("Last sync: \(viewModel.lastVaultSync!)")
+
+                Button("Sync now") {
+                    viewModel.syncVault(refreshList)
+                }
             }
         }.padding(.vertical, 16)
         .navigationTitle("Settings")
