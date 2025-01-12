@@ -14,6 +14,8 @@ struct HomeView: View {
 
     var body: some View {
         VStack {
+            KeyEventHandling().frame(width: 0, height: 0)
+            
             // Show the appropriate view based on the state of the vault
             if !vault.unlocked {
                 LoginView() // Show login view if the vault is locked
@@ -23,5 +25,34 @@ struct HomeView: View {
         }
         .padding(20) // Add padding around the content
         .frame(width: 400) // Set the width of the view
+    }
+}
+
+// Avoid error sound on keydown when it's managed by the app itself
+struct KeyEventHandling: NSViewRepresentable {
+    class KeyView: NSView {
+        func isManagedByThisView(_ event: NSEvent) -> Bool {
+            return true
+        }
+
+        override var acceptsFirstResponder: Bool { true }
+        override func keyDown(with event: NSEvent) {
+            if isManagedByThisView(event) {
+                print(">> key \(event.keyCode)")
+            } else {
+                super.keyDown(with: event)
+            }
+        }
+    }
+
+    func makeNSView(context: Context) -> NSView {
+        let view = KeyView()
+        DispatchQueue.main.async { // wait till next event cycle
+            view.window?.makeFirstResponder(view)
+        }
+        return view
+    }
+
+    func updateNSView(_ nsView: NSView, context: Context) {
     }
 }
