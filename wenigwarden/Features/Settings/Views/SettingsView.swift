@@ -28,19 +28,12 @@ struct SettingsView: View, Hashable {
                     SecureField("Password", text: $viewModel.password)
                         .frame(width: 200)
                         .onSubmit(viewModel.doEnableTouchId)
-                    Button(action: viewModel.doEnableTouchId) {
-                        if viewModel.isLoadingTouchId {
-                            // Loader
-                            ProgressView()
-                                .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                                .scaleEffect(0.7)
-                        } else {
-                            Text("Enable Touch ID")
-                        }
-                    }.buttonStyle(.borderedProminent)
+
+                    ButtonWithLoader(action: viewModel.doEnableTouchId, label: {
+                        Text("Enable Touch ID")
+                    }, isLoading: $viewModel.isLoadingTouchId, error: $viewModel.errorTouchId)
+                    .buttonStyle(.borderedProminent)
                     .disabled(viewModel.password.isEmpty)
-                    .modifier(ShakeEffect(shakes: viewModel.shakeTouchIdButton ? 2 : 0))
-                    .animation(.default, value: viewModel.shakeTouchIdButton)
                 }
             }
 
@@ -53,9 +46,11 @@ struct SettingsView: View, Hashable {
             if viewModel.lastVaultSync != nil {
                 Text("Last sync: \(viewModel.lastVaultSync!)")
 
-                Button("Sync now") {
+                ButtonWithLoader(action: {
                     viewModel.syncVault(refreshList)
-                }
+                }, label: {
+                    Text("Sync now")
+                }, isLoading: $viewModel.isLoadingSync, error: $viewModel.errorSync)
             }
         }.padding(.vertical, 16)
         .navigationTitle("Settings")

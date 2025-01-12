@@ -61,20 +61,11 @@ struct LoginView: View {
 
     /// The sign-in button
     private var signInButton: some View {
-        Button(action: viewModel.submitForm) {
-            if viewModel.isLoading {
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                    .scaleEffect(0.7)
-                    .frame(minWidth: 100, minHeight: 30)
-            } else {
-                Label("Sign In", systemImage: "lock.open")
-                    .frame(minWidth: 100, minHeight: 30)
-            }
-        }
+        ButtonWithLoader(action: viewModel.submitForm, label: {
+            Label("Sign In", systemImage: "lock.open")
+                .frame(minWidth: 100, minHeight: 30)
+        }, isLoading: $viewModel.isLoading, error: $viewModel.error)
         .buttonStyle(.borderedProminent)
-        .disabled(!viewModel.isFormValid || viewModel.isLoading)
-        .modifier(ShakeEffect(shakes: viewModel.shakeButton ? 2 : 0))
-        .animation(.default, value: viewModel.shakeButton)
+        .disabled(!viewModel.isFormValid)
     }
 }

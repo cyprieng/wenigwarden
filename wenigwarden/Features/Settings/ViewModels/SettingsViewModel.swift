@@ -13,10 +13,13 @@ class SettingsViewModel: ObservableObject {
     @Published public var enableTouchId: Bool = false
     @Published public var showPasswordInput: Bool = false
     @Published public var password: String = ""
-    @Published public var shakeTouchIdButton: Bool = false
+    @Published public var errorTouchId: Bool = false
     @Published public var isLoadingTouchId = false
 
+    // Sync
     @Published public var lastVaultSync: String?
+    @Published public var isLoadingSync = false
+    @Published public var errorSync = false
 
     /// Load inital value from AppState
     @MainActor
@@ -25,9 +28,9 @@ class SettingsViewModel: ObservableObject {
 
         // Load last sync date
         if let date = AppState.shared.lastVaultSync {
-            let df = DateFormatter()
-            df.dateFormat = "yyyy-MM-dd HH:mm:ss"
-            lastVaultSync = df.string(from: date)
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+            lastVaultSync = dateFormatter.string(from: date)
         }
     }
 
@@ -69,19 +72,24 @@ class SettingsViewModel: ObservableObject {
             } catch {
                 // Indicate there was an error when using the provided password
                 isLoadingTouchId = false
-                shakeTouchIdButton = true
-                try? await Task.sleep(for: .milliseconds(250))
-                shakeTouchIdButton = false
+                errorTouchId = true
             }
         }
     }
 
     /// Sync the vaule
+    @MainActor
     public func syncVault(_ refreshList: @escaping () -> Void) {
         Task {
-            try await Vault.shared.updateVault()
-            await self.loadInitialState()
-            refreshList()
+            self.isLoadingSync = true
+            do {
+                try await Vault.shared.updateVault()
+                self.loadInitialState()
+                refreshList()
+            } catch {
+                self.errorSync = true
+            }
+            self.isLoadingSync = false
         }
     }
 }

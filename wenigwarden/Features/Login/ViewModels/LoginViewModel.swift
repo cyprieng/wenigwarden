@@ -14,8 +14,7 @@ class LoginViewModel: ObservableObject {
     @Published var email: String = ""
     @Published var password: String = ""
     @Published var isLoading = false
-    @Published var error: Error?
-    @Published var shakeButton: Bool = false
+    @Published var error: Bool = false
 
     /// Checks if the form is valid
     var isFormValid: Bool {
@@ -51,9 +50,7 @@ class LoginViewModel: ObservableObject {
                 isLoading = false
             } catch {
                 isLoading = false
-                shakeButton = true
-                try? await Task.sleep(for: .milliseconds(250))
-                shakeButton = false
+                self.error = true
             }
         }
     }
