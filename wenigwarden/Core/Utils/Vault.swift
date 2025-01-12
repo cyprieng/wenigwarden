@@ -245,7 +245,9 @@ class Vault: ObservableObject {
 
     /// Locks the vault, clearing decrypted data
     public func lock() {
+        unlocked = false
         ciphersDecrypted = []
+        masterKey = nil
         privateKey = nil
         encKey = nil
         orgsKey = [:]

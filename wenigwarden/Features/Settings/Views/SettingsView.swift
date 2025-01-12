@@ -62,6 +62,12 @@ struct SettingsView: View, Hashable {
             }, isLoading: $viewModel.isLoadingSync, error: $viewModel.errorSync)
             .frame(maxWidth: .infinity, alignment: .leading)
 
+            // Lock vault
+            Button("Lock vault") {
+                Vault.shared.lock()
+            }
+            .padding(.top, 16)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 16)

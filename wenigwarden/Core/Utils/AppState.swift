@@ -35,6 +35,16 @@ class AppState: ObservableObject {
         KeyboardShortcuts.onKeyUp(for: .toggleMenu) {
             self.toggleAppVisibility()
         }
+
+        // Listen for lock event
+        let dnc = DistributedNotificationCenter.default()
+        dnc.addObserver(
+            forName: .init("com.apple.screenIsLocked"),
+            object: nil,
+            queue: .main
+        ) { _ in
+            Vault.shared.lock()
+        }
     }
 
     /// Toggle app visibility
