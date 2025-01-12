@@ -21,6 +21,7 @@ struct SettingsView: View, Hashable {
                 .onChange(of: viewModel.enableTouchId) {
                     viewModel.handleTouchIdChange()
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
 
             // Password input for TouchID
             if viewModel.showPasswordInput {
@@ -35,26 +36,36 @@ struct SettingsView: View, Hashable {
                     .buttonStyle(.borderedProminent)
                     .disabled(viewModel.password.isEmpty)
                 }
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
 
             // Shortcut setting
             Form {
-                KeyboardShortcuts.Recorder("Toggle menu:", name: .toggleMenu)
+                KeyboardShortcuts.Recorder("Toggle menu shortcut:", name: .toggleMenu)
             }
+            .frame(maxWidth: .infinity, alignment: .leading)
 
             // Sync
+            Text("Sync vault")
+                .fontWeight(.bold)
+                .padding(.top, 16)
+                .frame(maxWidth: .infinity, alignment: .leading)
+
             if viewModel.lastVaultSync != nil {
                 Text("Last sync: \(viewModel.lastVaultSync!)")
-
-                ButtonWithLoader(action: {
-                    viewModel.syncVault(refreshList)
-                }, label: {
-                    Text("Sync now")
-                }, isLoading: $viewModel.isLoadingSync, error: $viewModel.errorSync)
+                    .frame(maxWidth: .infinity, alignment: .leading)
             }
-        }.padding(.vertical, 16)
+            ButtonWithLoader(action: {
+                viewModel.syncVault(refreshList)
+            }, label: {
+                Text("Sync vault now")
+            }, isLoading: $viewModel.isLoadingSync, error: $viewModel.errorSync)
+            .frame(maxWidth: .infinity, alignment: .leading)
+
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.vertical, 16)
         .navigationTitle("Settings")
-        .frame(alignment: .leading)
         .onAppear(perform: viewModel.loadInitialState)
     }
 
