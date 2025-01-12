@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import Combine
 
 // Default height for the list
 let defaultMinHeight: CGFloat = 400
@@ -36,6 +37,9 @@ class CipherListViewModel: ObservableObject {
 
     /// Persist if we already bound the keyboard events
     private static var isEventAdded = false
+
+    // Sync timer
+    private var syncTimer: AnyCancellable?
 
     /// Loads the initial list of ciphers when the view appears
     @MainActor
@@ -67,6 +71,24 @@ class CipherListViewModel: ObservableObject {
                 await self.loadInitialCiphers()
             }
         }))
+    }
+
+    // Start background vault sync
+    public func startSyncJob() {
+        syncTimer = Timer.publish(every: 60 * 15, on: .main, in: .common)
+            .autoconnect()
+            .sink { _ in
+                Task {
+                    try await Vault.shared.updateVault()
+                    await self.loadInitialCiphers()
+                }
+            }
+    }
+
+    // Stop background vault sync
+    public func stopSyncJob() {
+        syncTimer?.cancel()
+        syncTimer = nil
     }
 
     /// When list appear

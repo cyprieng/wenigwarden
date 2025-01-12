@@ -76,7 +76,9 @@ struct CipherListView: View {
             .frame(minHeight: viewModel.minHeight)
             .onAppear {
                 viewModel.onGoToList()
+                viewModel.startSyncJob()
             }
+            .onDisappear(perform: viewModel.stopSyncJob)
             .onChange(of: viewModel.focusedCipherIndex, initial: true) { _, target in
                 // Scroll to currently selected item
                 if let target = target {
