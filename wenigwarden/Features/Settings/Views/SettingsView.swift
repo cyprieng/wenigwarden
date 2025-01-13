@@ -68,6 +68,14 @@ struct SettingsView: View, Hashable {
             }
             .padding(.top, 16)
             .frame(maxWidth: .infinity, alignment: .leading)
+
+            // Start on boot
+            Button("Start at login") {
+                AppState.shared.startOnBoot = 0
+                AppState.shared.launchOnBoot()
+            }
+            .padding(.top, 16)
+            .frame(maxWidth: .infinity, alignment: .leading)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 16)

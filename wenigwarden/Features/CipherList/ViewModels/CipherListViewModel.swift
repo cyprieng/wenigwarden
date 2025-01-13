@@ -56,7 +56,8 @@ class CipherListViewModel: ObservableObject {
                             CipherListViewModel.staticFocusedCipherIndex = CipherListViewModel.staticFocusedCipherIndex!
                                 > 1 ? CipherListViewModel.staticFocusedCipherIndex! - 1 : 0
                         } else if nsevent.keyCode == 36 { // enter -> go to details
-                            goToDetails(ciphers![CipherListViewModel.staticFocusedCipherIndex!], index: CipherListViewModel.staticFocusedCipherIndex!)
+                            goToDetails(ciphers![CipherListViewModel.staticFocusedCipherIndex!],
+                                        index: CipherListViewModel.staticFocusedCipherIndex!)
                         } else if nsevent.keyCode == 53 { // escape -> go back
                             AppState.shared.toggleAppVisibility()
                         } else {  // Otherwise -> bring back focus to search field if we are on the list
