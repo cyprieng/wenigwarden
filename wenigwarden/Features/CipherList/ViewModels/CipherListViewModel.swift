@@ -56,7 +56,7 @@ class CipherListViewModel: ObservableObject {
                             CipherListViewModel.staticFocusedCipherIndex = CipherListViewModel.staticFocusedCipherIndex!
                                 > 1 ? CipherListViewModel.staticFocusedCipherIndex! - 1 : 0
                         } else if nsevent.keyCode == 36 { // enter -> go to details
-                            goToDetails(ciphers![CipherListViewModel.staticFocusedCipherIndex!])
+                            goToDetails(ciphers![CipherListViewModel.staticFocusedCipherIndex!], index: CipherListViewModel.staticFocusedCipherIndex!)
                         } else if nsevent.keyCode == 53 { // escape -> go back
                             AppState.shared.toggleAppVisibility()
                         } else {  // Otherwise -> bring back focus to search field if we are on the list
@@ -68,7 +68,6 @@ class CipherListViewModel: ObservableObject {
                     } else {
                         if nsevent.keyCode == 53 { // escape -> go back
                             path.removeLast()
-                            onAppear()
                         }
                     }
                 }
@@ -95,8 +94,14 @@ class CipherListViewModel: ObservableObject {
     }
 
     /// Go to cipher details
-    public func goToDetails(_ cipher: CipherModel) {
+    public func goToDetails(_ cipher: CipherModel, index: Int) {
         minHeight = nil
+
+        // Select item
+        CipherListViewModel.staticFocusedCipherIndex = index
+        focusedCipherIndex = CipherListViewModel.staticFocusedCipherIndex
+
+        // Redirect to item
         path.append(CipherDetailsView(cipher: cipher))
     }
 

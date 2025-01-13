@@ -39,6 +39,11 @@ struct CipherListView: View {
                 // Link for cipher details
                 detailView
             }
+            .onChange(of: viewModel.path) { _, newValue in
+                if newValue.isEmpty {
+                    viewModel.onAppear()
+                }
+            }
         }
         .onAppear(perform: viewModel.loadInitialCiphers)
     }
@@ -68,7 +73,7 @@ struct CipherListView: View {
                     CipherListItemView(cipher: Binding(
                         get: { return cipher},
                         set: { _ in }
-                    ), goToDetails: {viewModel.goToDetails(cipher)})
+                    ), goToDetails: {viewModel.goToDetails(cipher, index: index)})
                     .tag(index)
                     .listRowSeparatorTint(.gray)
                 }
