@@ -15,7 +15,7 @@ struct HomeView: View {
     var body: some View {
         VStack {
             KeyEventHandling().frame(width: 0, height: 0)
-            
+
             // Show the appropriate view based on the state of the vault
             if !vault.unlocked {
                 LoginView() // Show login view if the vault is locked

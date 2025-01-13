@@ -75,7 +75,7 @@ struct CipherListView: View {
             }
             .frame(minHeight: viewModel.minHeight)
             .onAppear {
-                viewModel.onGoToList()
+                viewModel.onAppear()
                 viewModel.startSyncJob()
             }
             .onDisappear(perform: viewModel.stopSyncJob)
