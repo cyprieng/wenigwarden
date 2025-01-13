@@ -37,9 +37,7 @@ struct KeyEventHandling: NSViewRepresentable {
 
         override var acceptsFirstResponder: Bool { true }
         override func keyDown(with event: NSEvent) {
-            if isManagedByThisView(event) {
-                print(">> key \(event.keyCode)")
-            } else {
+            if !isManagedByThisView(event) {
                 super.keyDown(with: event)
             }
         }
