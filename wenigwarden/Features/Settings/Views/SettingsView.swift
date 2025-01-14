@@ -7,6 +7,7 @@
 
 import SwiftUI
 import KeyboardShortcuts
+import ServiceManagement
 
 /// The settings view
 struct SettingsView: View, Hashable {
@@ -45,6 +46,23 @@ struct SettingsView: View, Hashable {
             }
             .frame(maxWidth: .infinity, alignment: .leading)
 
+            // Start on boot
+            Toggle(
+                "Start at login",
+                isOn: Binding(
+                    get: { SMAppService.mainApp.status == .enabled },
+                    set: { isEnabled in
+                        if isEnabled {
+                            try? SMAppService.mainApp.register()
+                        } else {
+                            try? SMAppService.mainApp.unregister()
+                        }
+                    }
+                )
+            )
+            .toggleStyle(.switch)
+            .frame(maxWidth: .infinity, alignment: .leading)
+
             // Sync
             Text("Sync vault")
                 .fontWeight(.bold)
@@ -65,14 +83,6 @@ struct SettingsView: View, Hashable {
             // Lock vault
             Button("Lock vault") {
                 Vault.shared.lock()
-            }
-            .padding(.top, 16)
-            .frame(maxWidth: .infinity, alignment: .leading)
-
-            // Start on boot
-            Button("Start at login") {
-                AppState.shared.startOnBoot = 0
-                AppState.shared.launchOnBoot()
             }
             .padding(.top, 16)
             .frame(maxWidth: .infinity, alignment: .leading)
