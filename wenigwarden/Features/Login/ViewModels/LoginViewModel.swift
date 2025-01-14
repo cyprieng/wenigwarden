@@ -15,6 +15,7 @@ class LoginViewModel: ObservableObject {
     @Published var password: String = ""
     @Published var isLoading = false
     @Published var error: Bool = false
+    @Published var otpNeeded: Bool = false
 
     /// Checks if the form is valid
     var isFormValid: Bool {
@@ -42,21 +43,33 @@ class LoginViewModel: ObservableObject {
     /// Submits the login form
     @MainActor
     public func submitForm() {
+        self.submitForm(otp: nil)
+    }
+
+    /// Submits the login form
+    @MainActor
+    public func submitForm(otp: String? = nil) {
         guard isFormValid else { return }
         Task {
             do {
                 isLoading = true
-                try await login()
+                try await login(otp: otp)
                 isLoading = false
-            } catch {
+            } catch let error {
                 isLoading = false
-                self.error = true
+                if let errorResponse = error as? ErrorResponse,
+                   let description = errorResponse.errorDescription,
+                   description == "Two factor required." {
+                    self.otpNeeded = true
+                } else {
+                    self.error = true
+                }
             }
         }
     }
 
     /// Performs the login action
-    public func login() async throws {
+    public func login(otp: String? = nil) async throws {
         // Save data in app state service
         let vault = Vault.shared
         let appState = AppState.shared
@@ -71,15 +84,15 @@ class LoginViewModel: ObservableObject {
 
                 // Start login in background to ensure vault is up to date
                 Task {
-                    try await vault.login(email: email, url: url, password: password)
+                    try await vault.login(email: email, url: url, password: password, otp: otp)
                 }
             } catch {
                 // Unlock through API if direct unlock fails
-                try await vault.login(email: email, url: url, password: password)
+                try await vault.login(email: email, url: url, password: password, otp: otp)
             }
         } else {
             // Perform login through API
-            try await vault.login(email: email, url: url, password: password)
+            try await vault.login(email: email, url: url, password: password, otp: otp)
         }
     }
 }

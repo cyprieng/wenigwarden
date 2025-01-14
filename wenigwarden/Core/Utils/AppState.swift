@@ -63,4 +63,21 @@ class AppState: ObservableObject {
         UserDefaults.standard.set(enableTouchId, forKey: "enableTouchId")
         UserDefaults.standard.set(lastVaultSync, forKey: "lastVaultSync")
     }
+
+    /// Reset current app state
+    public func reset() {
+        let keysToRemove = ["url", "email", "deviceId", "enableTouchId", "lastVaultSync"]
+
+        for key in keysToRemove {
+            UserDefaults.standard.removeObject(forKey: key)
+        }
+
+        UserDefaults.standard.synchronize()
+
+        deviceId = ""
+        url = ""
+        email = ""
+        enableTouchId = false
+        lastVaultSync = nil
+    }
 }

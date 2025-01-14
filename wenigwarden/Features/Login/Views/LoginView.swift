@@ -14,6 +14,16 @@ struct LoginView: View {
     var body: some View {
         VStack(spacing: 20) {
             loginForm
+
+            // OTP is needed
+            if viewModel.otpNeeded {
+                Text("2FA:")
+                OTPInput { otp in
+                    print("Completed OTP:", otp)
+                    viewModel.submitForm(otp: otp)
+                }
+            }
+
             signInButton
         }
         .onAppear(perform: viewModel.loadInitialValues)
@@ -66,6 +76,6 @@ struct LoginView: View {
                 .frame(minWidth: 100, minHeight: 30)
         }, isLoading: $viewModel.isLoading, error: $viewModel.error)
         .buttonStyle(.borderedProminent)
-        .disabled(!viewModel.isFormValid)
+        .disabled(!viewModel.isFormValid || viewModel.otpNeeded)
     }
 }

@@ -35,8 +35,9 @@ class BitwardenAPI {
     ///   - email: The user's email
     ///   - password: The user's password
     ///   - kdfIterations: The number of KDF iterations
+    ///   - otp: OTP if needed
     /// - Returns: A `LoginResponse` containing tokens and keys
-    public func login(email: String, password: String, kdfIterations: Int) async throws -> LoginResponse {
+    public func login(email: String, password: String, kdfIterations: Int, otp: String? = nil) async throws -> LoginResponse {
         let masterKey = generateMasterKey(email: email, password: password, kdfIterations: kdfIterations)
 
         let key = pbkdf2(hash: CCPBKDFAlgorithm(kCCPRFHmacAlgSHA256),
@@ -45,19 +46,27 @@ class BitwardenAPI {
                          keyByteCount: 256/8,
                          rounds: 1)
 
+        var parameters = [
+            "grant_type": "password",
+            "username": email,
+            "password": key!.base64EncodedString(),
+            "scope": "api offline_access",
+            "client_id": "browser",
+            "deviceType": 7,
+            "deviceIdentifier": AppState.shared.deviceId,
+            "deviceName": "wenigwarden",
+            "devicePushToken": ""
+        ] as [String: Any]
+
+        // Add OTP
+        if otp != nil {
+            parameters["twoFactorToken"] = otp
+        }
+
         let response = try await request(method: .post, path: "/identity/connect/token",
                                          encoding: URLEncoding.default,
-                                         parameters: [
-                                            "grant_type": "password",
-                                            "username": email,
-                                            "password": key!.base64EncodedString(),
-                                            "scope": "api offline_access",
-                                            "client_id": "browser",
-                                            "deviceType": 7,
-                                            "deviceIdentifier": AppState.shared.deviceId,
-                                            "deviceName": "wenigwarden",
-                                            "devicePushToken": ""
-                                         ], responseType: LoginResponse.self)
+                                         parameters: parameters,
+                                         responseType: LoginResponse.self)
 
         // Store tokens and expiration time
         accessToken = response.accessToken
@@ -116,6 +125,14 @@ class BitwardenAPI {
                     case .success(let value):
                         continuation.resume(returning: value)
                     case .failure(let error):
+                        // Try to parse the error message
+                        if let data = response.data {
+                            let errorResponse = try? JSONDecoder().decode(ErrorResponse.self, from: data)
+                            if errorResponse != nil {
+                                continuation.resume(throwing: errorResponse!)
+                                return
+                            }
+                        }
                         continuation.resume(throwing: error)
                     }
                 }

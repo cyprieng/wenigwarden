@@ -92,4 +92,10 @@ class SettingsViewModel: ObservableObject {
             self.isLoadingSync = false
         }
     }
+
+    /// Logout action
+    public func logout() {
+        AppState.shared.reset()
+        Vault.shared.reset()
+    }
 }

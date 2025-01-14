@@ -86,6 +86,11 @@ struct SettingsView: View, Hashable {
             }
             .padding(.top, 16)
             .frame(maxWidth: .infinity, alignment: .leading)
+
+            // Log out
+            Button("Log out", action: viewModel.logout)
+                .padding(.top, 16)
+                .frame(maxWidth: .infinity, alignment: .leading)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 16)

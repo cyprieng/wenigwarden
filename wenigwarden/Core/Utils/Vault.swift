@@ -111,7 +111,8 @@ class Vault: ObservableObject {
     ///   - email: The user's email address
     ///   - url: The Bitwarden service URL
     ///   - password: The user's password
-    public func login(email: String, url: String, password: String) async throws {
+    ///   - otp: OTP if needed
+    public func login(email: String, url: String, password: String, otp: String? = nil) async throws {
         // Set Bitwarden service URL
         let bitwardenService = BitwardenAPI.shared
         bitwardenService.host = url
@@ -122,7 +123,8 @@ class Vault: ObservableObject {
         // Login with email, password, and KDF iterations
         let loginResp = try await bitwardenService.login(email: email,
                                                          password: password,
-                                                         kdfIterations: preloginResponse.kdfIterations)
+                                                         kdfIterations: preloginResponse.kdfIterations,
+                                                         otp: otp)
 
         // Set encrypted keys and KDF iterations
         setKeys(encryptedEncKey: loginResp.key,
@@ -251,6 +253,26 @@ class Vault: ObservableObject {
         privateKey = nil
         encKey = nil
         orgsKey = [:]
+    }
+
+    /// Reset vault
+    public func reset() {
+        try? keychain.remove("touchidpassword")
+        try? keychain.remove("ciphers")
+        try? keychain.remove("profile")
+        try? keychain.remove("encryptedEncKey")
+        try? keychain.remove("encryptedPrivateKey")
+        try? keychain.remove("kdfIterations")
+
+        self.ciphers = []
+        self.profile = nil
+        self.encryptedPrivateKey = nil
+        self.encryptedEncKey = nil
+        self.kdfIterations = nil
+
+        self.lock()
+
+        self.logged = false
     }
 
     /// Searches for ciphers matching the query

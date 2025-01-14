@@ -7,6 +7,15 @@
 
 import Foundation
 
+/// Model for Bitwarden errors
+struct ErrorResponse: Decodable, Error {
+    let errorDescription: String?
+
+    enum CodingKeys: String, CodingKey {
+        case errorDescription = "error_description"
+    }
+}
+
 /// Model representing the response from the prelogin request
 struct PreloginResponse: Decodable {
     let kdfIterations: Int
