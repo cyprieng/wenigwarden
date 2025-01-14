@@ -7,50 +7,92 @@
 
 import SwiftUI
 
-// Button with loader animation
-struct ButtonWithLoader<Label>: View where Label: View {
-    // Action on click
-    let action: () -> Void
-
-    // Label
-    let label: () -> Label
-
-    // Is loading state
-    @Binding var isLoading: Bool
-
-    // Error flag
-    @Binding var error: Bool
-
-    // Shake button when there is an error
-    @State var shakeButton: Bool = false
+/// OTP digit field
+struct OTPDigitField: View {
+    @Binding var text: String
+    let index: Int
+    @FocusState.Binding var focusedField: Int?
 
     var body: some View {
-        if isLoading {
-            // Button with loader
-            Button(action: {}, label: {
-                ProgressView()
-                    .progressViewStyle(CircularProgressViewStyle(tint: .white))
-                    .scaleEffect(0.7)
-                    .frame(minWidth: 100, minHeight: 30)
+        TextField("", text: $text)
+            .textFieldStyle(.roundedBorder)
+            .frame(width: 45, height: 45)
+            .multilineTextAlignment(.center)
+            .focused($focusedField, equals: index)
+            .onReceive(NotificationCenter.default.publisher(for: NSControl.textDidChangeNotification)) { _ in
+                // Only allow numbers
+                text = text.filter { "0123456789".contains($0) }
+            }
+    }
+}
 
-            })
-            .disabled(true)
+/// OTP Input
+struct OTPInput: View {
+    @State private var otpFields: [String] = Array(repeating: "", count: 6)
+    @FocusState private var focusedField: Int?
+    let onComplete: (String) -> Void
+
+    var body: some View {
+        HStack(spacing: 12) {
+            ForEach(0..<6) { index in
+                OTPDigitField(
+                    text: bindingForIndex(index),
+                    index: index,
+                    focusedField: $focusedField
+                )
+            }
+        }
+        .onAppear {
+            focusedField = 0
+        }
+        .onKeyPress(.init(Character(UnicodeScalar(127)))) {
+            handleBackspace()
+            return .handled
+        }
+    }
+
+    /// Binding for index
+    private func bindingForIndex(_ index: Int) -> Binding<String> {
+        return Binding(
+            get: { otpFields[index] },
+            set: { newValue in
+                handleInput(newValue: newValue, index: index)
+            }
+        )
+    }
+
+    /// Handle digit input
+    private func handleInput(newValue: String, index: Int) {
+        // Limit to 1 char
+        if newValue.count > 1 {
+            otpFields[index] = String(newValue.prefix(1))
         } else {
-            // Classic button
-            Button(action: action, label: label)
-                .modifier(ShakeEffect(shakes: shakeButton ? 2 : 0))
-                .animation(.default, value: shakeButton)
-                .onChange(of: error, initial: true, {
-                    // In case error is true -> shake the button
-                    if error {
-                        Task {
-                            shakeButton = true
-                            try? await Task.sleep(for: .milliseconds(250))
-                            shakeButton = false
-                            error = false
-                        }
-                    }
-                })
+            otpFields[index] = newValue
+        }
+
+        // Go to next field
+        if !newValue.isEmpty && index == focusedField && index < 5 {
+            focusedField = (focusedField ?? 0) +  1
+        }
+
+        // All field empty -> validate input
+        if index == 5 && !newValue.isEmpty {
+            let otp = otpFields.joined()
+            onComplete(otp)
+        }
+    }
+
+    /// Handle backspace event
+    private func handleBackspace() {
+        guard let currentFocus = focusedField else { return }
+
+        if otpFields[currentFocus].isEmpty && currentFocus > 0 {
+            // If current field is empty -> go to previous field
+            focusedField = currentFocus - 1
+            otpFields[currentFocus - 1] = ""
+        } else {
+            // Clear current field
+            otpFields[currentFocus] = ""
         }
     }
 }
