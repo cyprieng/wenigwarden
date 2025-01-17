@@ -49,6 +49,12 @@ struct OTPInput: View {
             handleBackspace()
             return .handled
         }
+        .onChange(of: otpFields) { _, newValue in
+            if newValue.joined().count == 6 {
+                let otp = otpFields.joined()
+                onComplete(otp)
+            }
+        }
     }
 
     /// Binding for index
@@ -73,12 +79,6 @@ struct OTPInput: View {
         // Go to next field
         if !newValue.isEmpty && index == focusedField && index < 5 {
             focusedField = (focusedField ?? 0) +  1
-        }
-
-        // All field empty -> validate input
-        if index == 5 && !newValue.isEmpty {
-            let otp = otpFields.joined()
-            onComplete(otp)
         }
     }
 

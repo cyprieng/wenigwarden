@@ -26,7 +26,12 @@ class AppState: ObservableObject {
     /// Private initializer to enforce singleton pattern
     private init() {
         // Retrieve stored values or provide default values
-        deviceId = UserDefaults.standard.string(forKey: "deviceId") ?? UUID().uuidString
+        deviceId = UserDefaults.standard.string(forKey: "deviceId") ?? ""
+
+        if deviceId.isEmpty {
+            deviceId = UUID().uuidString
+        }
+
         url = UserDefaults.standard.string(forKey: "url") ?? "https://bitwarden.com"
         email = UserDefaults.standard.string(forKey: "email") ?? ""
         enableTouchId = UserDefaults.standard.bool(forKey: "enableTouchId")
