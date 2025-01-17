@@ -8,6 +8,7 @@
 import Foundation
 import Alamofire
 import CommonCrypto
+import KeychainAccess
 
 /// A class to interact with the Bitwarden API
 class BitwardenAPI {
@@ -18,7 +19,13 @@ class BitwardenAPI {
     var refreshToken: String?
     var expireIn: Int?
 
-    private init() {}
+    // Keychain to store refresh token
+    var keychain: Keychain
+
+    private init() {
+        keychain = Keychain(service: "io.cyprien.wenigwarden")
+        refreshToken = try? keychain.get("refreshToken")
+    }
 
     /// Performs a prelogin to get KDF iterations
     /// - Parameter email: The user's email
@@ -72,6 +79,7 @@ class BitwardenAPI {
         accessToken = response.accessToken
         refreshToken = response.refreshToken
         expireIn = response.expiresIn
+        keychain["refreshToken"] = refreshToken
 
         return LoginResponse(
             masterKey: masterKey!,
