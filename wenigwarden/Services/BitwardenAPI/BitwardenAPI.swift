@@ -17,7 +17,6 @@ class BitwardenAPI {
     var host: String?
     var accessToken: String?
     var refreshToken: String?
-    var expireIn: Int?
 
     // Keychain to store refresh token
     var keychain: Keychain
@@ -78,7 +77,6 @@ class BitwardenAPI {
         // Store tokens and expiration time
         accessToken = response.accessToken
         refreshToken = response.refreshToken
-        expireIn = response.expiresIn
         keychain["refreshToken"] = refreshToken
 
         return LoginResponse(
@@ -89,6 +87,23 @@ class BitwardenAPI {
             refreshToken: response.refreshToken,
             expiresIn: response.expiresIn
         )
+    }
+
+    /// Refresh access token using refresh token
+    public func refreshAccessToken(_ refreshToken: String)  async throws {
+        let response = try await request(method: .post, path: "/identity/connect/token",
+                                         encoding: URLEncoding.default,
+                                         parameters: [
+                                            "grant_type": "refresh_token",
+                                            "client_id": "browser",
+                                            "refresh_token": refreshToken
+                                         ],
+                                         responseType: RefreshTokenResponse.self)
+
+        // Store tokens and expiration time
+        accessToken = response.accessToken
+        self.refreshToken = response.refreshToken
+        keychain["refreshToken"] = refreshToken
     }
 
     /// Synchronizes the vault with the server
@@ -113,7 +128,8 @@ class BitwardenAPI {
                                        path: String,
                                        encoding: ParameterEncoding,
                                        parameters: [String: Any]?,
-                                       responseType: T.Type) async throws -> T {
+                                       responseType: T.Type,
+                                       isRetry: Bool = false) async throws -> T {
         try await withUnsafeThrowingContinuation { continuation in
             var headers: HTTPHeaders = []
             if let token = accessToken {
@@ -128,16 +144,43 @@ class BitwardenAPI {
             let url = "\(host)\(path)"
             AF.request(url, method: method, parameters: parameters, encoding: encoding, headers: headers)
                 .validate()
-                .responseDecodable(of: responseType) { response in
+                .responseDecodable(of: responseType) { [weak self] response in
+                    guard let self = self else { return }
+
                     switch response.result {
                     case .success(let value):
                         continuation.resume(returning: value)
                     case .failure(let error):
-                        // Try to parse the error message
+                        if response.response?.statusCode == 401,
+                           let refreshToken = self.refreshToken,
+                           !isRetry {
+                            // We need to refresh the token
+                            Task {
+                                do {
+                                    try await self.refreshAccessToken(refreshToken)
+
+                                    // Retry request
+                                    let result = try await self.request(
+                                        method: method,
+                                        path: path,
+                                        encoding: encoding,
+                                        parameters: parameters,
+                                        responseType: responseType,
+                                        isRetry: true
+                                    )
+                                    continuation.resume(returning: result)
+                                } catch {
+                                    continuation.resume(throwing: error)
+                                }
+                            }
+                            return
+                        }
+
+                        // Other errors
                         if let data = response.data {
                             let errorResponse = try? JSONDecoder().decode(ErrorResponse.self, from: data)
-                            if errorResponse != nil {
-                                continuation.resume(throwing: errorResponse!)
+                            if let errorResponse = errorResponse {
+                                continuation.resume(throwing: errorResponse)
                                 return
                             }
                         }

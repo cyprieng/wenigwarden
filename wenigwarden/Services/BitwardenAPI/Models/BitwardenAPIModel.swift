@@ -52,3 +52,15 @@ struct LoginResponse: Decodable {
         case expiresIn = "expires_in"
     }
 }
+
+/// Model representing the response from the refresh token request
+struct RefreshTokenResponse: Decodable {
+    let accessToken: String
+    let refreshToken: String
+
+    /// Coding keys for decoding
+    enum CodingKeys: String, CodingKey {
+        case accessToken = "access_token"
+        case refreshToken = "refresh_token"
+    }
+}

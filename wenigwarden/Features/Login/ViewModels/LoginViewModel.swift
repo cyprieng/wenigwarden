@@ -82,9 +82,10 @@ class LoginViewModel: ObservableObject {
             do {
                 try await Vault.shared.unlock(password: password)
 
-                // Start login in background to ensure vault is up to date
+                // Update vault in background to ensure vault is up to date
                 Task {
-                    try await vault.login(email: email, url: url, password: password, otp: otp)
+                    BitwardenAPI.shared.host = url
+                    try await vault.updateVault()
                 }
             } catch {
                 // Unlock through API if direct unlock fails
