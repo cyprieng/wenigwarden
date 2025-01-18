@@ -23,6 +23,9 @@ class AppState: ObservableObject {
     var enableTouchId: Bool = false
     var lastVaultSync: Date?
 
+    // Flag indicating that a relog is necessary
+    @Published var needRelogin: Bool = false
+
     /// Private initializer to enforce singleton pattern
     private init() {
         // Retrieve stored values or provide default values

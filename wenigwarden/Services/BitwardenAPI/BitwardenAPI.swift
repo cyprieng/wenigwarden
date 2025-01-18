@@ -43,7 +43,10 @@ class BitwardenAPI {
     ///   - kdfIterations: The number of KDF iterations
     ///   - otp: OTP if needed
     /// - Returns: A `LoginResponse` containing tokens and keys
-    public func login(email: String, password: String, kdfIterations: Int, otp: String? = nil) async throws -> LoginResponse {
+    public func login(email: String,
+                      password: String,
+                      kdfIterations: Int,
+                      otp: String? = nil) async throws -> LoginResponse {
         let masterKey = generateMasterKey(email: email, password: password, kdfIterations: kdfIterations)
 
         let key = pbkdf2(hash: CCPBKDFAlgorithm(kCCPRFHmacAlgSHA256),
@@ -149,6 +152,7 @@ class BitwardenAPI {
 
                     switch response.result {
                     case .success(let value):
+                        AppState.shared.needRelogin = false
                         continuation.resume(returning: value)
                     case .failure(let error):
                         if response.response?.statusCode == 401,
@@ -174,6 +178,9 @@ class BitwardenAPI {
                                 }
                             }
                             return
+                        } else if response.response?.statusCode == 401 && path != "/identity/connect/token" {
+                            // We have a 401 and no refresh token or already retried -> we need to login again
+                            AppState.shared.needRelogin = true
                         }
 
                         // Other errors

@@ -10,6 +10,7 @@ import SwiftUI
 /// A view representing the list of ciphers
 struct CipherListView: View {
     @ObservedObject var viewModel = CipherListViewModel()
+    @ObservedObject var state = AppState.shared
 
     /// Search field focus state
     @FocusState var isSearchFieldFocused: Bool
@@ -17,6 +18,20 @@ struct CipherListView: View {
     var body: some View {
         NavigationStack(path: $viewModel.path) {
             VStack {
+                // Relogin button
+                if state.needRelogin {
+                    Button(action: {
+                        Vault.shared.logged = false
+                        Vault.shared.unlocked = false
+                    }, label: {
+                        HStack {
+                            Image(systemName: "exclamationmark.triangle.fill")
+                                .foregroundColor(.yellow)
+                            Text("An error occured: you need to login again")
+                        }
+                    })
+                }
+
                 HStack {
                     // Search field
                     searchField

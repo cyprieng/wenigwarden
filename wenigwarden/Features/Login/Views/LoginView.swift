@@ -19,7 +19,6 @@ struct LoginView: View {
             if viewModel.otpNeeded {
                 Text("2FA:")
                 OTPInput { otp in
-                    print("Completed OTP:", otp)
                     viewModel.submitForm(otp: otp)
                 }
             }
