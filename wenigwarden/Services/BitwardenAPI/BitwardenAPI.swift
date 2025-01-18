@@ -119,6 +119,23 @@ class BitwardenAPI {
                                  responseType: VaultModel.self)
     }
 
+    /// Build API headers
+    private func buildHeaders() -> HTTPHeaders {
+        var headers: HTTPHeaders = []
+        if let token = accessToken {
+            headers["Authorization"] = "Bearer \(token)"
+        }
+        return headers
+    }
+
+    /// Build request url
+    /// - Parameters:
+    ///   - path: The API endpoint path
+    private func buildRequestURL(path: String) -> String? {
+        guard let host = host else { return nil }
+        return "\(host)\(path)"
+    }
+
     /// Makes a request to the Bitwarden API
     /// - Parameters:
     ///   - method: The HTTP method to use
@@ -134,17 +151,13 @@ class BitwardenAPI {
                                        responseType: T.Type,
                                        isRetry: Bool = false) async throws -> T {
         try await withUnsafeThrowingContinuation { continuation in
-            var headers: HTTPHeaders = []
-            if let token = accessToken {
-                headers["Authorization"] = "Bearer \(token)"
-            }
+            let headers = buildHeaders()
 
-            guard let host = host else {
+            guard let url = buildRequestURL(path: path) else {
                 continuation.resume(throwing: URLError(.badURL))
                 return
             }
 
-            let url = "\(host)\(path)"
             AF.request(url, method: method, parameters: parameters, encoding: encoding, headers: headers)
                 .validate()
                 .responseDecodable(of: responseType) { [weak self] response in
