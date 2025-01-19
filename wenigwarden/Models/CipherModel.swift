@@ -16,6 +16,8 @@ struct CipherModel: Codable, Identifiable {
     var deletedDate: String?
     var key: String?
     var image: Image?
+    var notes: String?
+    var fields: [CustomFields]?
 
     /// Coding keys for encoding and decoding
     enum CodingKeys: String, CodingKey {
@@ -25,6 +27,8 @@ struct CipherModel: Codable, Identifiable {
         case organizationId
         case deletedDate
         case key
+        case notes
+        case fields
     }
 
     /// Initializer for creating a new cipher model
@@ -47,6 +51,8 @@ struct CipherModel: Codable, Identifiable {
         organizationId = try? container.decode(String.self, forKey: .organizationId)
         deletedDate = try? container.decode(String.self, forKey: .deletedDate)
         key = try? container.decode(String.self, forKey: .key)
+        notes = try? container.decode(String.self, forKey: .notes)
+        fields = try? container.decode([CustomFields].self, forKey: .fields)
     }
 
     /// Decrypts the cipher using the provided organization keys
@@ -95,6 +101,35 @@ struct CipherModel: Codable, Identifiable {
             let decryptedUri = try decrypt(decKey: decKey, str: uri)
             cipherDecoded.login?.uri = String(bytes: decryptedUri, encoding: .utf8)
         }
+
+        // Decrypt the URIs if available
+        var urisDecoded: [Uris] = []
+        if let uris = login?.uris {
+            for uri in uris {
+                let decryptedUri = try decrypt(decKey: decKey, str: uri.uri)
+                urisDecoded.append(Uris(uri: String(bytes: decryptedUri, encoding: .utf8)!))
+            }
+        }
+        cipherDecoded.login?.uris = urisDecoded
+
+        // Notes
+        if notes != nil {
+            let decryptedNote = try decrypt(decKey: decKey, str: notes!)
+            cipherDecoded.notes = String(bytes: decryptedNote, encoding: .utf8)
+        }
+
+        // Custom fields
+        var decodedFields: [CustomFields] = []
+        if let fields = fields {
+            for field in fields {
+                let decryptedName = try decrypt(decKey: decKey, str: field.name)
+                let decryptedValue = try decrypt(decKey: decKey, str: field.value ?? "")
+                decodedFields.append(CustomFields(name: String(bytes: decryptedName, encoding: .utf8)!,
+                                                  value: String(bytes: decryptedValue, encoding: .utf8)!,
+                                                  type: field.type))
+            }
+        }
+        cipherDecoded.fields = decodedFields
 
         return cipherDecoded
     }

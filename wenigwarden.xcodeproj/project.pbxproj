@@ -38,6 +38,10 @@
 		7E77A52B2C7C9D7F00EC9A1D /* CipherDetailsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E77A52A2C7C9D7F00EC9A1D /* CipherDetailsView.swift */; };
 		7E880F872D2D5ACE00130EB9 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E880F862D2D5ACA00130EB9 /* Constants.swift */; };
 		7E880F892D2D5AF100130EB9 /* KeyboardShortcuts in Frameworks */ = {isa = PBXBuildFile; productRef = 7E880F882D2D5AF100130EB9 /* KeyboardShortcuts */; };
+		7E8FFEA02D3D7001009B3338 /* PasswordRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E8FFE9F2D3D6FFC009B3338 /* PasswordRow.swift */; };
+		7E8FFEA32D3D7075009B3338 /* TextComponents.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E8FFEA22D3D7063009B3338 /* TextComponents.swift */; };
+		7E8FFEA52D3D711F009B3338 /* DetailRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E8FFEA42D3D711C009B3338 /* DetailRow.swift */; };
+		7E8FFEA72D3D729D009B3338 /* UriRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E8FFEA62D3D729A009B3338 /* UriRow.swift */; };
 		7EB6F7602C74F1D400C6AC18 /* VaultModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EB6F75F2C74F1D400C6AC18 /* VaultModel.swift */; };
 		7EEEDC252CB83C2D009CFD95 /* CipherModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7EEEDC242CB83C29009CFD95 /* CipherModel.swift */; };
 /* End PBXBuildFile section */
@@ -54,6 +58,10 @@
 		7E77A52A2C7C9D7F00EC9A1D /* CipherDetailsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CipherDetailsView.swift; sourceTree = "<group>"; };
 		7E7CE2412D2947B1005CFF39 /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		7E880F862D2D5ACA00130EB9 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		7E8FFE9F2D3D6FFC009B3338 /* PasswordRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PasswordRow.swift; sourceTree = "<group>"; };
+		7E8FFEA22D3D7063009B3338 /* TextComponents.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextComponents.swift; sourceTree = "<group>"; };
+		7E8FFEA42D3D711C009B3338 /* DetailRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailRow.swift; sourceTree = "<group>"; };
+		7E8FFEA62D3D729A009B3338 /* UriRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UriRow.swift; sourceTree = "<group>"; };
 		7EB6F75F2C74F1D400C6AC18 /* VaultModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VaultModel.swift; sourceTree = "<group>"; };
 		7EEEDC242CB83C29009CFD95 /* CipherModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CipherModel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -226,6 +234,10 @@
 		7E761E342C7DEC590037DA47 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				7E8FFEA62D3D729A009B3338 /* UriRow.swift */,
+				7E8FFEA42D3D711C009B3338 /* DetailRow.swift */,
+				7E8FFEA22D3D7063009B3338 /* TextComponents.swift */,
+				7E8FFE9F2D3D6FFC009B3338 /* PasswordRow.swift */,
 				7E77A52A2C7C9D7F00EC9A1D /* CipherDetailsView.swift */,
 			);
 			path = Views;
@@ -348,8 +360,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7E8FFEA02D3D7001009B3338 /* PasswordRow.swift in Sources */,
+				7E8FFEA52D3D711F009B3338 /* DetailRow.swift in Sources */,
+				7E8FFEA72D3D729D009B3338 /* UriRow.swift in Sources */,
 				7E77A5272C78E75E00EC9A1D /* CipherListView.swift in Sources */,
 				7EB6F7602C74F1D400C6AC18 /* VaultModel.swift in Sources */,
+				7E8FFEA32D3D7075009B3338 /* TextComponents.swift in Sources */,
 				7E77A5292C7C8FA300EC9A1D /* CipherListItemView.swift in Sources */,
 				7E761E222C7DDE490037DA47 /* LoginViewModel.swift in Sources */,
 				7E77A52B2C7C9D7F00EC9A1D /* CipherDetailsView.swift in Sources */,

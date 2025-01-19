@@ -72,8 +72,10 @@ struct Login: Codable {
 }
 
 /// Model representing a URI
-struct Uris: Codable {
+struct Uris: Codable, Identifiable {
     var uri: String
+
+    var id: String { uri }
 
     /// Coding keys for encoding and decoding
     enum CodingKeys: String, CodingKey {
@@ -138,5 +140,37 @@ struct Organization: Codable {
         let container = try caseInsensitiveDecoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
         key = try container.decode(String.self, forKey: .key)
+    }
+}
+
+/// Model representing custom fields
+struct CustomFields: Codable, Identifiable {
+    let name: String
+    let value: String?
+    let type: Int
+
+    var id: String { name }
+
+    /// Coding keys for encoding and decoding
+    enum CodingKeys: String, CodingKey {
+        case name
+        case value
+        case type
+    }
+
+    /// Initializer for creating a new organization model
+    init(name: String, value: String, type: Int) {
+        self.name = name
+        self.value = value
+        self.type = type
+    }
+
+    /// Initializer for decoding an organization model
+    init(from decoder: Decoder) throws {
+        let caseInsensitiveDecoder = CaseInsensitiveDecoder(decoder)
+        let container = try caseInsensitiveDecoder.container(keyedBy: CodingKeys.self)
+        name = try container.decode(String.self, forKey: .name)
+        value = try? container.decode(String.self, forKey: .value)
+        type = try container.decode(Int.self, forKey: .type)
     }
 }
