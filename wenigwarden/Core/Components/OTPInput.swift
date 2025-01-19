@@ -15,8 +15,9 @@ struct OTPDigitField: View {
 
     var body: some View {
         TextField("", text: $text)
-            .textFieldStyle(.roundedBorder)
-            .frame(width: 45, height: 45)
+            .textFieldStyle(.plain)
+            .frame(width: 30, height: 50)
+            .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray))
             .multilineTextAlignment(.center)
             .focused($focusedField, equals: index)
             .onReceive(NotificationCenter.default.publisher(for: NSControl.textDidChangeNotification)) { _ in
