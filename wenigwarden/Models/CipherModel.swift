@@ -61,6 +61,23 @@ struct CipherModel: Codable, Identifiable {
         identity = try? container.decode(Identity.self, forKey: .identity)
     }
 
+    /// Get decryption key for current cipher
+    private func getDecKey(orgsKey: [String: [UInt8]] = [:]) throws -> [UInt8]? {
+        var decKey: [UInt8]?
+
+        // Get the decryption key from organization keys if available
+        if let orgId = organizationId {
+            decKey = orgsKey[orgId]
+        }
+
+        // Get the decryption key from the cipher's key if available
+        if let key = self.key {
+            decKey = try decrypt(str: key)
+        }
+        return decKey
+    }
+
+    /// Decrypt given string with given decryption key
     private func decryptString(_ input: String?, decKey: [UInt8]?) -> String? {
         if input != nil {
             if let decrypted = try? decrypt(decKey: decKey, str: input!) {
@@ -71,99 +88,9 @@ struct CipherModel: Codable, Identifiable {
         return nil
     }
 
-    /// Decrypts the cipher using the provided organization keys
-    /// - Parameter orgsKey: Dictionary of organization keys
-    /// - Returns: Decrypted cipher model or nil if the cipher is deleted
-    public func decryptCipher(orgsKey: [String: [UInt8]] = [:]) throws -> CipherModel? {
-        // Return nil if the cipher is deleted
-        if deletedDate != nil {
-            return nil
-        }
-
-        // Create a new decrypted cipher model
-        var cipherDecoded = CipherModel(
-            id: id, name: "",
-            login: Login(username: nil, password: nil, totp: nil, uri: nil, uris: nil),
-            organizationId: organizationId, deletedDate: nil, key: nil)
-
-        var decKey: [UInt8]?
-        // Get the decryption key from organization keys if available
-        if let orgId = organizationId {
-            decKey = orgsKey[orgId]
-        }
-        // Get the decryption key from the cipher's key if available
-        if let key = self.key {
-            decKey = try decrypt(str: key)
-        }
-
-        // Decrypt the name of the cipher
-        let name = try decrypt(decKey: decKey, str: name)
-        cipherDecoded.name = String(bytes: name, encoding: .utf8)!
-
-        // Decrypt the username if available
-        if let username = login?.username {
-            let decryptedUsername = try decrypt(decKey: decKey, str: username)
-            cipherDecoded.login?.username = String(bytes: decryptedUsername, encoding: .utf8)
-        }
-
-        // Decrypt the password if available
-        if let password = login?.password {
-            let decryptedPassword = try decrypt(decKey: decKey, str: password)
-            cipherDecoded.login?.password = String(bytes: decryptedPassword, encoding: .utf8)
-        }
-
-        // Decrypt the URI if available
-        if let uri = login?.uri {
-            let decryptedUri = try decrypt(decKey: decKey, str: uri)
-            cipherDecoded.login?.uri = String(bytes: decryptedUri, encoding: .utf8)
-        }
-
-        // Decrypt the URIs if available
-        var urisDecoded: [Uris] = []
-        if let uris = login?.uris {
-            for uri in uris {
-                let decryptedUri = try decrypt(decKey: decKey, str: uri.uri)
-                urisDecoded.append(Uris(uri: String(bytes: decryptedUri, encoding: .utf8)!))
-            }
-        }
-        cipherDecoded.login?.uris = urisDecoded
-
-        // Notes
-        if notes != nil {
-            let decryptedNote = try decrypt(decKey: decKey, str: notes!)
-            cipherDecoded.notes = String(bytes: decryptedNote, encoding: .utf8)
-        }
-
-        // Custom fields
-        var decodedFields: [CustomFields] = []
-        if let fields = fields {
-            for field in fields {
-                let decryptedName = try decrypt(decKey: decKey, str: field.name)
-                let decryptedValue = try decrypt(decKey: decKey, str: field.value ?? "")
-                decodedFields.append(CustomFields(name: String(bytes: decryptedName, encoding: .utf8)!,
-                                                  value: String(bytes: decryptedValue, encoding: .utf8)!,
-                                                  type: field.type))
-            }
-        }
-        cipherDecoded.fields = decodedFields
-
-        // Totp
-        if let totp = login?.totp {
-            let decryptedTotp = try decrypt(decKey: decKey, str: totp)
-            cipherDecoded.login!.totp = String(bytes: decryptedTotp, encoding: .utf8)
-        }
-
-        // Card details
-        cipherDecoded.card = Card(
-            cardholderName: decryptString(card?.cardholderName, decKey: decKey),
-            code: decryptString(card?.code, decKey: decKey),
-            expMonth: decryptString(card?.expMonth, decKey: decKey),
-            expYear: decryptString(card?.expYear, decKey: decKey),
-            number: decryptString(card?.number, decKey: decKey)
-        )
-
-        // Identity
-        cipherDecoded.identity = Identity(
+    /// Decrypt identity
+    func decryptIdentity(_ identity: Identity?, decKey: [UInt8]?) -> Identity {
+        return Identity(
             address1: decryptString(identity?.address1, decKey: decKey),
             address2: decryptString(identity?.address2, decKey: decKey),
             address3: decryptString(identity?.address3, decKey: decKey),
@@ -183,11 +110,63 @@ struct CipherModel: Codable, Identifiable {
             title: decryptString(identity?.title, decKey: decKey),
             username: decryptString(identity?.username, decKey: decKey)
         )
+    }
 
-        if cipherDecoded.name == "guillemot" {
-            print(cipherDecoded.id)
-            print(cipherDecoded.identity)
+    /// Decrypts the cipher using the provided organization keys
+    /// - Parameter orgsKey: Dictionary of organization keys
+    /// - Returns: Decrypted cipher model or nil if the cipher is deleted
+    public func decryptCipher(orgsKey: [String: [UInt8]] = [:]) throws -> CipherModel? {
+        // Return nil if the cipher is deleted
+        if deletedDate != nil {
+            return nil
         }
+
+        // Create a new decrypted cipher model
+        let decKey = try? getDecKey(orgsKey: orgsKey)
+        var cipherDecoded = CipherModel(
+            id: id,
+            name: decryptString(name, decKey: decKey)!,
+            login: Login(
+                username: decryptString(login?.username, decKey: decKey),
+                password: decryptString(login?.password, decKey: decKey),
+                totp: decryptString(login?.totp, decKey: decKey),
+                uri: decryptString(login?.uri, decKey: decKey),
+                uris: []
+            ),
+            organizationId: organizationId,
+            deletedDate: nil,
+            key: nil
+        )
+
+        // Decrypt the URIs if available
+        for uri in login?.uris ?? [] {
+            if let decryptedUri = decryptString(uri.uri, decKey: decKey) {
+                cipherDecoded.login?.uris?.append(Uris(uri: decryptedUri))
+            }
+        }
+
+        // Notes
+        cipherDecoded.notes = decryptString(notes, decKey: decKey)
+
+        // Custom fields
+        cipherDecoded.fields = []
+        for field in fields ?? [] {
+            cipherDecoded.fields?.append(CustomFields(name: decryptString(field.name, decKey: decKey) ?? "",
+                                                      value: decryptString(field.value ?? "", decKey: decKey) ?? "",
+                                                      type: field.type))
+        }
+
+        // Card details
+        cipherDecoded.card = Card(
+            cardholderName: decryptString(card?.cardholderName, decKey: decKey),
+            code: decryptString(card?.code, decKey: decKey),
+            expMonth: decryptString(card?.expMonth, decKey: decKey),
+            expYear: decryptString(card?.expYear, decKey: decKey),
+            number: decryptString(card?.number, decKey: decKey)
+        )
+
+        // Identity
+        cipherDecoded.identity = decryptIdentity(identity, decKey: decKey)
 
         return cipherDecoded
     }
