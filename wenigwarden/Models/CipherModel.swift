@@ -131,6 +131,12 @@ struct CipherModel: Codable, Identifiable {
         }
         cipherDecoded.fields = decodedFields
 
+        // Totp
+        if let totp = login?.totp {
+            let decryptedTotp = try decrypt(decKey: decKey, str: totp)
+            cipherDecoded.login!.totp = String(bytes: decryptedTotp, encoding: .utf8)
+        }
+
         return cipherDecoded
     }
 

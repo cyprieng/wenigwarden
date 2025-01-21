@@ -60,6 +60,11 @@ struct CipherDetailsView: View, Hashable {
                     }
                 }
             }
+
+            // TOTP
+            if let totp = cipher.login?.totp, !totp.isEmpty {
+                TotpComponent(totpSecret: totp, copyKeyCode: "t")
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.top, 16)

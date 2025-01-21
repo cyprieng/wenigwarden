@@ -31,6 +31,8 @@
 		7E0EAFDF2C7362E900030BC5 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E0EAFDE2C7362E900030BC5 /* LoginView.swift */; };
 		7E0EAFF32C73984A00030BC5 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 7E0EAFF22C73984A00030BC5 /* Alamofire */; };
 		7E3387A22C74B292003EE9DF /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 7E3387A12C74B292003EE9DF /* CryptoSwift */; };
+		7E74AA522D3FBB49008EEB98 /* TotpComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E74AA512D3FBB45008EEB98 /* TotpComponent.swift */; };
+		7E74AA542D3FBBB1008EEB98 /* SwiftOTP in Frameworks */ = {isa = PBXBuildFile; productRef = 7E74AA532D3FBBB1008EEB98 /* SwiftOTP */; };
 		7E761E222C7DDE490037DA47 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E761E212C7DDE490037DA47 /* LoginViewModel.swift */; };
 		7E761E302C7DEADA0037DA47 /* CipherListViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E761E2F2C7DEADA0037DA47 /* CipherListViewModel.swift */; };
 		7E77A5272C78E75E00EC9A1D /* CipherListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E77A5262C78E75E00EC9A1D /* CipherListView.swift */; };
@@ -51,6 +53,7 @@
 		7E0EAFCD2C73584A00030BC5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7E0EAFD22C73584A00030BC5 /* wenigwarden.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = wenigwarden.entitlements; sourceTree = "<group>"; };
 		7E0EAFDE2C7362E900030BC5 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		7E74AA512D3FBB45008EEB98 /* TotpComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TotpComponent.swift; sourceTree = "<group>"; };
 		7E761E212C7DDE490037DA47 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		7E761E2F2C7DEADA0037DA47 /* CipherListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CipherListViewModel.swift; sourceTree = "<group>"; };
 		7E77A5262C78E75E00EC9A1D /* CipherListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CipherListView.swift; sourceTree = "<group>"; };
@@ -85,6 +88,7 @@
 				7E0EAFF32C73984A00030BC5 /* Alamofire in Frameworks */,
 				7E880F892D2D5AF100130EB9 /* KeyboardShortcuts in Frameworks */,
 				7E3387A22C74B292003EE9DF /* CryptoSwift in Frameworks */,
+				7E74AA542D3FBBB1008EEB98 /* SwiftOTP in Frameworks */,
 				7E0875762CC0E75100C7834A /* KeychainAccess in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -234,6 +238,7 @@
 		7E761E342C7DEC590037DA47 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				7E74AA512D3FBB45008EEB98 /* TotpComponent.swift */,
 				7E8FFEA62D3D729A009B3338 /* UriRow.swift */,
 				7E8FFEA42D3D711C009B3338 /* DetailRow.swift */,
 				7E8FFEA22D3D7063009B3338 /* TextComponents.swift */,
@@ -275,6 +280,7 @@
 				7E3387A12C74B292003EE9DF /* CryptoSwift */,
 				7E0875752CC0E75100C7834A /* KeychainAccess */,
 				7E880F882D2D5AF100130EB9 /* KeyboardShortcuts */,
+				7E74AA532D3FBBB1008EEB98 /* SwiftOTP */,
 			);
 			productName = wenigwarden;
 			productReference = 7E0EAFC62C73584800030BC5 /* wenigwarden.app */;
@@ -313,6 +319,7 @@
 				7E3387A02C74B292003EE9DF /* XCRemoteSwiftPackageReference "CryptoSwift" */,
 				7E0875742CC0E6C700C7834A /* XCRemoteSwiftPackageReference "KeychainAccess" */,
 				7E880F852D2D5A9500130EB9 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
+				7E74AA502D3FBACB008EEB98 /* XCRemoteSwiftPackageReference "SwiftOTP" */,
 			);
 			productRefGroup = 7E0EAFC72C73584800030BC5 /* Products */;
 			projectDirPath = "";
@@ -360,6 +367,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7E74AA522D3FBB49008EEB98 /* TotpComponent.swift in Sources */,
 				7E8FFEA02D3D7001009B3338 /* PasswordRow.swift in Sources */,
 				7E8FFEA52D3D711F009B3338 /* DetailRow.swift in Sources */,
 				7E8FFEA72D3D729D009B3338 /* UriRow.swift in Sources */,
@@ -647,6 +655,14 @@
 				minimumVersion = 1.8.3;
 			};
 		};
+		7E74AA502D3FBACB008EEB98 /* XCRemoteSwiftPackageReference "SwiftOTP" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/lachlanbell/SwiftOTP.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 3.0.2;
+			};
+		};
 		7E880F852D2D5A9500130EB9 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/sindresorhus/KeyboardShortcuts";
@@ -672,6 +688,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 7E3387A02C74B292003EE9DF /* XCRemoteSwiftPackageReference "CryptoSwift" */;
 			productName = CryptoSwift;
+		};
+		7E74AA532D3FBBB1008EEB98 /* SwiftOTP */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7E74AA502D3FBACB008EEB98 /* XCRemoteSwiftPackageReference "SwiftOTP" */;
+			productName = SwiftOTP;
 		};
 		7E77A5242C779B9200EC9A1D /* SwiftLintBuildToolPlugin */ = {
 			isa = XCSwiftPackageProductDependency;
