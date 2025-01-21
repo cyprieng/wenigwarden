@@ -19,6 +19,7 @@ struct CipherModel: Codable, Identifiable {
     var notes: String?
     var fields: [CustomFields]?
     var card: Card?
+    var identity: Identity?
 
     /// Coding keys for encoding and decoding
     enum CodingKeys: String, CodingKey {
@@ -31,6 +32,7 @@ struct CipherModel: Codable, Identifiable {
         case notes
         case fields
         case card
+        case identity
     }
 
     /// Initializer for creating a new cipher model
@@ -56,6 +58,7 @@ struct CipherModel: Codable, Identifiable {
         notes = try? container.decode(String.self, forKey: .notes)
         fields = try? container.decode([CustomFields].self, forKey: .fields)
         card = try? container.decode(Card.self, forKey: .card)
+        identity = try? container.decode(Identity.self, forKey: .identity)
     }
 
     private func decryptString(_ input: String?, decKey: [UInt8]?) -> String? {
@@ -158,6 +161,33 @@ struct CipherModel: Codable, Identifiable {
             expYear: decryptString(card?.expYear, decKey: decKey),
             number: decryptString(card?.number, decKey: decKey)
         )
+
+        // Identity
+        cipherDecoded.identity = Identity(
+            address1: decryptString(identity?.address1, decKey: decKey),
+            address2: decryptString(identity?.address2, decKey: decKey),
+            address3: decryptString(identity?.address3, decKey: decKey),
+            city: decryptString(identity?.city, decKey: decKey),
+            company: decryptString(identity?.company, decKey: decKey),
+            country: decryptString(identity?.country, decKey: decKey),
+            email: decryptString(identity?.email, decKey: decKey),
+            firstName: decryptString(identity?.firstName, decKey: decKey),
+            lastName: decryptString(identity?.lastName, decKey: decKey),
+            licenseNumber: decryptString(identity?.licenseNumber, decKey: decKey),
+            middleName: decryptString(identity?.middleName, decKey: decKey),
+            passportNumber: decryptString(identity?.passportNumber, decKey: decKey),
+            phone: decryptString(identity?.phone, decKey: decKey),
+            postalCode: decryptString(identity?.postalCode, decKey: decKey),
+            ssn: decryptString(identity?.ssn, decKey: decKey),
+            state: decryptString(identity?.state, decKey: decKey),
+            title: decryptString(identity?.title, decKey: decKey),
+            username: decryptString(identity?.username, decKey: decKey)
+        )
+
+        if cipherDecoded.name == "guillemot" {
+            print(cipherDecoded.id)
+            print(cipherDecoded.identity)
+        }
 
         return cipherDecoded
     }

@@ -216,3 +216,110 @@ struct Card: Codable {
         number = try? container.decode(String.self, forKey: .number)
     }
 }
+
+/// Model representing an identity
+struct Identity: Codable {
+    var address1: String?
+    var address2: String?
+    var address3: String?
+    var city: String?
+    var company: String?
+    var country: String?
+    var email: String?
+    var firstName: String?
+    var lastName: String?
+    var licenseNumber: String?
+    var middleName: String?
+    var passportNumber: String?
+    var phone: String?
+    var postalCode: String?
+    var ssn: String?
+    var state: String?
+    var title: String?
+    var username: String?
+
+    /// Coding keys for encoding and decoding
+    enum CodingKeys: String, CodingKey {
+        case address1
+        case address2
+        case address3
+        case city
+        case company
+        case country
+        case email
+        case firstName
+        case lastName
+        case licenseNumber
+        case middleName
+        case passportNumber
+        case phone
+        case postalCode
+        case ssn
+        case state
+        case title
+        case username
+    }
+
+    /// Initializer for creating a new identity model
+    init(address1: String? = nil,
+         address2: String? = nil,
+         address3: String? = nil,
+         city: String? = nil,
+         company: String? = nil,
+         country: String? = nil,
+         email: String? = nil,
+         firstName: String? = nil,
+         lastName: String? = nil,
+         licenseNumber: String? = nil,
+         middleName: String? = nil,
+         passportNumber: String? = nil,
+         phone: String? = nil,
+         postalCode: String? = nil,
+         ssn: String? = nil,
+         state: String? = nil,
+         title: String? = nil,
+         username: String? = nil) {
+        self.address1 = address1
+        self.address2 = address2
+        self.address3 = address3
+        self.city = city
+        self.company = company
+        self.country = country
+        self.email = email
+        self.firstName = firstName
+        self.lastName = lastName
+        self.licenseNumber = licenseNumber
+        self.middleName = middleName
+        self.passportNumber = passportNumber
+        self.phone = phone
+        self.postalCode = postalCode
+        self.ssn = ssn
+        self.state = state
+        self.title = title
+        self.username = username
+    }
+
+    /// Initializer for decoding an identity model
+    init(from decoder: Decoder) throws {
+        let caseInsensitiveDecoder = CaseInsensitiveDecoder(decoder)
+        let container = try caseInsensitiveDecoder.container(keyedBy: CodingKeys.self)
+        address1 = try? container.decode(String.self, forKey: .address1)
+        address2 = try? container.decode(String.self, forKey: .address2)
+        address3 = try? container.decode(String.self, forKey: .address3)
+        city = try? container.decode(String.self, forKey: .city)
+        company = try? container.decode(String.self, forKey: .company)
+        country = try? container.decode(String.self, forKey: .country)
+        email = try? container.decode(String.self, forKey: .email)
+        firstName = try? container.decode(String.self, forKey: .firstName)
+        lastName = try? container.decode(String.self, forKey: .lastName)
+        licenseNumber = try? container.decode(String.self, forKey: .licenseNumber)
+        middleName = try? container.decode(String.self, forKey: .middleName)
+        passportNumber = try? container.decode(String.self, forKey: .passportNumber)
+        phone = try? container.decode(String.self, forKey: .phone)
+        postalCode = try? container.decode(String.self, forKey: .postalCode)
+        ssn = try? container.decode(String.self, forKey: .ssn)
+        state = try? container.decode(String.self, forKey: .state)
+        title = try? container.decode(String.self, forKey: .title)
+        username = try? container.decode(String.self, forKey: .username)
+    }
+}
