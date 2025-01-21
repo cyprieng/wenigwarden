@@ -18,6 +18,7 @@ struct CipherModel: Codable, Identifiable {
     var image: Image?
     var notes: String?
     var fields: [CustomFields]?
+    var card: Card?
 
     /// Coding keys for encoding and decoding
     enum CodingKeys: String, CodingKey {
@@ -29,6 +30,7 @@ struct CipherModel: Codable, Identifiable {
         case key
         case notes
         case fields
+        case card
     }
 
     /// Initializer for creating a new cipher model
@@ -53,6 +55,17 @@ struct CipherModel: Codable, Identifiable {
         key = try? container.decode(String.self, forKey: .key)
         notes = try? container.decode(String.self, forKey: .notes)
         fields = try? container.decode([CustomFields].self, forKey: .fields)
+        card = try? container.decode(Card.self, forKey: .card)
+    }
+
+    private func decryptString(_ input: String?, decKey: [UInt8]?) -> String? {
+        if input != nil {
+            if let decrypted = try? decrypt(decKey: decKey, str: input!) {
+                return String(bytes: decrypted, encoding: .utf8)
+            }
+        }
+
+        return nil
     }
 
     /// Decrypts the cipher using the provided organization keys
@@ -136,6 +149,15 @@ struct CipherModel: Codable, Identifiable {
             let decryptedTotp = try decrypt(decKey: decKey, str: totp)
             cipherDecoded.login!.totp = String(bytes: decryptedTotp, encoding: .utf8)
         }
+
+        // Card details
+        cipherDecoded.card = Card(
+            cardholderName: decryptString(card?.cardholderName, decKey: decKey),
+            code: decryptString(card?.code, decKey: decKey),
+            expMonth: decryptString(card?.expMonth, decKey: decKey),
+            expYear: decryptString(card?.expYear, decKey: decKey),
+            number: decryptString(card?.number, decKey: decKey)
+        )
 
         return cipherDecoded
     }

@@ -174,3 +174,45 @@ struct CustomFields: Codable, Identifiable {
         type = try container.decode(Int.self, forKey: .type)
     }
 }
+
+/// Model representing a payment card
+struct Card: Codable {
+    var cardholderName: String?
+    var code: String?
+    var expMonth: String?
+    var expYear: String?
+    var number: String?
+
+    /// Coding keys for encoding and decoding
+    enum CodingKeys: String, CodingKey {
+        case cardholderName
+        case code
+        case expMonth
+        case expYear
+        case number
+    }
+
+    /// Initializer for creating a new payment card model
+    init(cardholderName: String? = nil,
+         code: String? = nil,
+         expMonth: String? = nil,
+         expYear: String? = nil,
+         number: String? = nil) {
+        self.cardholderName = cardholderName
+        self.code = code
+        self.expMonth = expMonth
+        self.expYear = expYear
+        self.number = number
+    }
+
+    /// Initializer for decoding a payment card model
+    init(from decoder: Decoder) throws {
+        let caseInsensitiveDecoder = CaseInsensitiveDecoder(decoder)
+        let container = try caseInsensitiveDecoder.container(keyedBy: CodingKeys.self)
+        cardholderName = try? container.decode(String.self, forKey: .cardholderName)
+        code = try? container.decode(String.self, forKey: .code)
+        expMonth = try? container.decode(String.self, forKey: .expMonth)
+        expYear = try? container.decode(String.self, forKey: .expYear)
+        number = try? container.decode(String.self, forKey: .number)
+    }
+}

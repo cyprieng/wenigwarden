@@ -32,7 +32,22 @@ struct CipherDetailsView: View, Hashable {
 
             // Password
             if let password = cipher.login?.password, !password.isEmpty {
-                PasswordRow(password: cipher.login?.password ?? "", copyKeyCode: "p")
+                PasswordRow(title: "Password", password: cipher.login?.password ?? "", copyKeyCode: "p")
+            }
+
+            // Card details
+            if let cardHolderName = cipher.card?.cardholderName, !cardHolderName.isEmpty {
+                DetailRow(title: "Card holder name", value: cardHolderName, copyKeyCode: nil)
+            }
+            if let number = cipher.card?.number, !number.isEmpty {
+                PasswordRow(title: "Card number", password: number, copyKeyCode: nil)
+            }
+            if let expMonth = cipher.card?.expMonth, !expMonth.isEmpty,
+               let expYear = cipher.card?.expYear, !expYear.isEmpty {
+                DetailRow(title: "Expiration", value: "\(expMonth)/\(expYear)", copyKeyCode: nil)
+            }
+            if let code = cipher.card?.code, !code.isEmpty {
+                PasswordRow(title: "Code", password: code, copyKeyCode: nil)
             }
 
             // Notes
@@ -53,7 +68,7 @@ struct CipherDetailsView: View, Hashable {
                 ForEach(fields) { field in
                     if let value = field.value, !value.isEmpty {
                         if field.type == 1 {
-                            PasswordRow(password: value, copyKeyCode: nil)
+                            PasswordRow(title: "Password", password: value, copyKeyCode: nil)
                         } else {
                             DetailRow(title: field.name, value: value, copyKeyCode: nil)
                         }

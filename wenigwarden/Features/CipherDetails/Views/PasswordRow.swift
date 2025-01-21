@@ -9,6 +9,7 @@ import SwiftUI
 
 /// Password row component
 struct PasswordRow: View {
+    let title: String
     let password: String
     let copyKeyCode: String?
 
@@ -16,7 +17,7 @@ struct PasswordRow: View {
 
     var body: some View {
         GridRow {
-            TextLabel(title: "Password")
+            TextLabel(title: title)
 
             TextValue(text: isPasswordVisible ? password : String(repeating: "•", count: 8))
 
