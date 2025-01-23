@@ -35,9 +35,10 @@ struct CipherListItemView: View {
     /// View for displaying the favicon image
     private var faviconImageView: some View {
         ZStack {
-            // Base globe icon
-            Image(systemName: "globe")
+            // Base icon
+            Image(systemName: getDefaultImage())
                 .resizable()
+                .scaledToFit()
                 .foregroundColor(.gray)
                 .frame(width: 16, height: 16)
 
@@ -45,6 +46,7 @@ struct CipherListItemView: View {
             if let favicon = faviconImage {
                 favicon
                     .resizable()
+                    .scaledToFit()
                     .frame(width: 16, height: 16)
                     .transition(.opacity)
             }
@@ -58,11 +60,34 @@ struct CipherListItemView: View {
             Text(cipher.name)
                 .lineLimit(1)
                 .truncationMode(.tail)
-            Text(cipher.login?.username ?? "")
-                .lineLimit(1)
-                .truncationMode(.tail)
+
+            if cipher.type == 3 {
+                Text("*\(cipher.card?.number?.suffix(4) ?? "")")
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+            } else if cipher.type == 4 {
+                Text("\(cipher.identity?.firstName ?? "") \(cipher.identity?.lastName ?? "")")
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+            } else {
+                Text("\(cipher.identity?.firstName ?? "") \(cipher.identity?.lastName ?? "")")
+                    .lineLimit(1)
+                    .truncationMode(.tail)
+            }
         }
         .padding(5)
+    }
+
+    /// Get default image depending on cipher type
+    private func getDefaultImage() -> String {
+        if cipher.type == 3 {
+            return "creditcard"
+        } else if cipher.type == 4 {
+            return "person.text.rectangle"
+        } else if cipher.type == 2 {
+            return "document"
+        }
+        return "globe"
     }
 
     /// Loads the favicon image asynchronously

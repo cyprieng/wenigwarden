@@ -10,6 +10,7 @@ import SwiftUI
 /// Model representing a cipher
 struct CipherModel: Codable, Identifiable {
     var id: String
+    var type: Int
     var name: String
     var login: Login?
     var organizationId: String?
@@ -33,11 +34,19 @@ struct CipherModel: Codable, Identifiable {
         case fields
         case card
         case identity
+        case type
     }
 
     /// Initializer for creating a new cipher model
-    init(id: String, name: String, login: Login?, organizationId: String?, deletedDate: String?, key: String?) {
+    init(id: String,
+         type: Int,
+         name: String,
+         login: Login?,
+         organizationId: String?,
+         deletedDate: String?,
+         key: String?) {
         self.id = id
+        self.type = type
         self.name = name
         self.login = login
         self.organizationId = organizationId
@@ -50,6 +59,7 @@ struct CipherModel: Codable, Identifiable {
         let caseInsensitiveDecoder = CaseInsensitiveDecoder(decoder)
         let container = try caseInsensitiveDecoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
+        type = try container.decode(Int.self, forKey: .type)
         name = try container.decode(String.self, forKey: .name)
         login = try? container.decode(Login.self, forKey: .login)
         organizationId = try? container.decode(String.self, forKey: .organizationId)
@@ -125,6 +135,7 @@ struct CipherModel: Codable, Identifiable {
         let decKey = try? getDecKey(orgsKey: orgsKey)
         var cipherDecoded = CipherModel(
             id: id,
+            type: type,
             name: decryptString(name, decKey: decKey)!,
             login: Login(
                 username: decryptString(login?.username, decKey: decKey),
