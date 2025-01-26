@@ -19,8 +19,12 @@ struct UriRow: View {
             Link(destination: URL(string: uri) ?? URL(string: "https://")!) {
                 TextValue(text: uri)
             }
-            .onHover { _ in
-                NSCursor.pointingHand.set()
+            .onHover { isHovered in
+                if isHovered {
+                    NSCursor.pointingHand.set()
+                } else {
+                    NSCursor.arrow.set()
+                }
             }
 
             ClipboardButton(data: uri, copyKeyCode: copyKeyCode)
