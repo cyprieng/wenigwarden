@@ -60,8 +60,11 @@ class CipherListViewModel: ObservableObject {
                                         index: CipherListViewModel.staticFocusedCipherIndex!)
                         } else if nsevent.keyCode == 53 { // escape -> go back
                             AppState.shared.toggleAppVisibility()
-                        } else {  // Otherwise -> bring back focus to search field if we are on the list
+                        } else if !isSearchFieldFocused {
+                            // Otherwise -> bring back focus to search field if we are on the list
                             isSearchFieldFocused = true
+                        } else {
+                            return nsevent
                         }
 
                         // Set focused cipher
@@ -69,11 +72,13 @@ class CipherListViewModel: ObservableObject {
                     } else {
                         if nsevent.keyCode == 53 { // escape -> go back
                             path.removeLast()
+                        } else {
+                            return nsevent
                         }
                     }
                 }
 
-                return nsevent
+                return nil
             }
         }
     }

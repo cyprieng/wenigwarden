@@ -49,6 +49,7 @@ struct ClipboardButton: View {
                         if nsevent.characters == copyKeyCode {
                             copyToClipboard(data)
                             showCopyKeyCode = false
+                            return nil
                         }
                     }
 
