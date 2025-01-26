@@ -114,6 +114,7 @@ struct CipherDetailsView: View, Hashable {
                 Text(notes)
                     .lineLimit(nil)
                     .truncationMode(.tail)
+                    .textSelection(.enabled)
             }
 
             // Custom fields
