@@ -86,7 +86,7 @@ class CipherListViewModel: ObservableObject {
     /// Loads the initial list of ciphers when the view appears
     @MainActor
     public func loadInitialCiphers() {
-        ciphers = Vault.shared.ciphersDecrypted
+        performSearch(searchQuery)
     }
 
     /// Performs a search based on the user's query
