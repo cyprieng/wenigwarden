@@ -109,6 +109,16 @@ class BitwardenAPI {
         keychain["refreshToken"] = refreshToken
     }
 
+    /// Get attachment data
+    public func getAttachmentData(cipherId: String, attachmentId: String) async throws -> AttachmentResponse {
+        let response = try await request(method: .get, path: "/api/ciphers/\(cipherId)/attachment/\(attachmentId)",
+                                         encoding: URLEncoding.default,
+                                         parameters: nil,
+                                         responseType: AttachmentResponse.self)
+
+        return response
+    }
+
     /// Synchronizes the vault with the server
     /// - Returns: A `VaultModel` containing the synchronized vault data
     public func sync() async throws -> VaultModel {

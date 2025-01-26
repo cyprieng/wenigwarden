@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Alamofire
 
 /// Model representing a cipher
 struct CipherModel: Codable, Identifiable {
@@ -21,6 +22,7 @@ struct CipherModel: Codable, Identifiable {
     var fields: [CustomFields]?
     var card: Card?
     var identity: Identity?
+    var attachments: [Attachment]?
 
     /// Coding keys for encoding and decoding
     enum CodingKeys: String, CodingKey {
@@ -35,6 +37,7 @@ struct CipherModel: Codable, Identifiable {
         case card
         case identity
         case type
+        case attachments
     }
 
     /// Initializer for creating a new cipher model
@@ -69,15 +72,16 @@ struct CipherModel: Codable, Identifiable {
         fields = try? container.decode([CustomFields].self, forKey: .fields)
         card = try? container.decode(Card.self, forKey: .card)
         identity = try? container.decode(Identity.self, forKey: .identity)
+        attachments = try? container.decode([Attachment].self, forKey: .attachments)
     }
 
     /// Get decryption key for current cipher
-    private func getDecKey(orgsKey: [String: [UInt8]] = [:]) throws -> [UInt8]? {
+    private func getDecKey() throws -> [UInt8]? {
         var decKey: [UInt8]?
 
         // Get the decryption key from organization keys if available
         if let orgId = organizationId {
-            decKey = orgsKey[orgId]
+            decKey = Vault.shared.orgsKey[orgId]
         }
 
         // Get the decryption key from the cipher's key if available
@@ -123,16 +127,15 @@ struct CipherModel: Codable, Identifiable {
     }
 
     /// Decrypts the cipher using the provided organization keys
-    /// - Parameter orgsKey: Dictionary of organization keys
     /// - Returns: Decrypted cipher model or nil if the cipher is deleted
-    public func decryptCipher(orgsKey: [String: [UInt8]] = [:]) throws -> CipherModel? {
+    public func decryptCipher() throws -> CipherModel? {
         // Return nil if the cipher is deleted
         if deletedDate != nil {
             return nil
         }
 
         // Create a new decrypted cipher model
-        let decKey = try? getDecKey(orgsKey: orgsKey)
+        let decKey = try? getDecKey()
         var cipherDecoded = CipherModel(
             id: id,
             type: type,
@@ -146,7 +149,7 @@ struct CipherModel: Codable, Identifiable {
             ),
             organizationId: organizationId,
             deletedDate: nil,
-            key: nil
+            key: key
         )
 
         // Decrypt the URIs if available
@@ -178,6 +181,15 @@ struct CipherModel: Codable, Identifiable {
 
         // Identity
         cipherDecoded.identity = decryptIdentity(identity, decKey: decKey)
+
+        // Attachments
+        cipherDecoded.attachments = []
+        for attachment in attachments ?? [] {
+            cipherDecoded.attachments?.append(
+                Attachment(id: attachment.id,
+                           fileName: decryptString(attachment.fileName, decKey: decKey))
+            )
+        }
 
         return cipherDecoded
     }
@@ -216,5 +228,48 @@ struct CipherModel: Codable, Identifiable {
         }
 
         return nil
+    }
+
+    /// Download attachment
+    public func downloadAttachment(_ attachmentId: String) async {
+        let data = try? await BitwardenAPI.shared.getAttachmentData(cipherId: id, attachmentId: attachmentId)
+        if let urlString = data?.url, !urlString.isEmpty {
+            guard let url = URL(string: urlString) else { return }
+
+            // Get attachment
+            let attachment = attachments?.filter { $0.id == attachmentId }.first
+            guard let filename = attachment?.fileName else { return }
+
+            // Get attachment decryption key
+            let decKey = try? getDecKey()
+            let decryptKey = try? decrypt(decKey: decKey, str: data!.key)
+
+            // Show native save dialog
+            DispatchQueue.main.async {
+                let savePanel = NSSavePanel()
+                savePanel.nameFieldStringValue = filename
+                savePanel.canCreateDirectories = true
+                savePanel.allowedContentTypes = [.data]
+
+                let response = savePanel.runModal()
+                if response == .OK, let destinationURL = savePanel.url {
+                    AF.request(url)
+                        .responseData { response in
+                            switch response.result {
+                            case .success(let encryptedData):
+                                do {
+                                    let decryptedBytes = try decryptData(key: decryptKey!, data: encryptedData)
+                                    let decryptedData = Data(decryptedBytes)
+                                    try decryptedData.write(to: destinationURL)
+                                } catch {
+                                    print("Error decrypting: \(error)")
+                                }
+                            case .failure(let error):
+                                print("Error downloading: \(error)")
+                            }
+                        }
+                }
+            }
+        }
     }
 }

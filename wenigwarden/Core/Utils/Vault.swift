@@ -229,7 +229,7 @@ class Vault: ObservableObject {
         var newCiphersDecrypted = [CipherModel]()
 
         for cipher in ciphers {
-            if let cipherDecoded = try cipher.decryptCipher(orgsKey: orgsKey) {
+            if let cipherDecoded = try cipher.decryptCipher() {
                 newCiphersDecrypted.append(cipherDecoded)
             }
         }

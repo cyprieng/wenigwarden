@@ -64,3 +64,15 @@ struct RefreshTokenResponse: Decodable {
         case refreshToken = "refresh_token"
     }
 }
+
+/// Model representing the response from an attachment request
+struct AttachmentResponse: Decodable {
+    let url: String
+    let key: String
+
+    /// Coding keys for decoding
+    enum CodingKeys: String, CodingKey {
+        case url
+        case key
+    }
+}

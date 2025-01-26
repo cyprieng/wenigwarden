@@ -136,6 +136,28 @@ struct CipherDetailsView: View, Hashable {
             if let totp = cipher.login?.totp, !totp.isEmpty {
                 TotpComponent(totpSecret: totp, copyKeyCode: "t")
             }
+
+            // Attachments
+            if let attachments = cipher.attachments, !attachments.isEmpty {
+                Text("Attachments:")
+                    .bold()
+
+                ForEach(attachments) { attachment in
+                    GridRow {
+                        Text(attachment.fileName ?? "")
+
+                        Button(action: {
+                            if let id = attachment.id {
+                                Task {
+                                    await cipher.downloadAttachment(id)
+                                }
+                            }
+                        }, label: {
+                            Image(systemName: "square.and.arrow.down")
+                        })
+                    }
+                }
+            }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.top, 16)

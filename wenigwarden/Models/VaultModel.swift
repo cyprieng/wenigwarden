@@ -323,3 +323,31 @@ struct Identity: Codable {
         username = try? container.decode(String.self, forKey: .username)
     }
 }
+
+/// Model representing an attachment
+struct Attachment: Codable, Identifiable {
+    var id: String?
+    var fileName: String?
+
+    /// Coding keys for encoding and decoding
+    enum CodingKeys: String, CodingKey {
+        case id
+        case fileName
+    }
+
+    /// Initializer for creating a new attachment model
+    init(id: String? = nil,
+         fileName: String? = nil,
+         key: String? = nil) {
+        self.id = id
+        self.fileName = fileName
+    }
+
+    /// Initializer for decoding an attachment model
+    init(from decoder: Decoder) throws {
+        let caseInsensitiveDecoder = CaseInsensitiveDecoder(decoder)
+        let container = try caseInsensitiveDecoder.container(keyedBy: CodingKeys.self)
+        id = try? container.decode(String.self, forKey: .id)
+        fileName = try? container.decode(String.self, forKey: .fileName)
+    }
+}

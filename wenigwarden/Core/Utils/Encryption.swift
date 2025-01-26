@@ -93,6 +93,22 @@ func decrypt(decKey: [UInt8]? = nil, encKey: [UInt8]? = nil, str: String) throws
     }
 }
 
+/// Decrypt data
+func decryptData(key: [UInt8], data: Data) throws -> Data {
+    // Key are the 32 first bytes
+    let key = Array(key.prefix(32))
+
+    // Split data
+    let iv = data[1..<17]
+    let ct =  data[49...]
+
+    // Decrypt
+    let aes = try AES(key: key, blockMode: CBC(iv: Array(iv)), padding: .pkcs7)
+    let pt = try aes.decrypt(Array(ct))
+
+    return Data(pt)
+}
+
 func pbkdf2(hash: CCPBKDFAlgorithm, passwordData: Data, salt: Data, keyByteCount: Int, rounds: Int) -> Data? {
     let passwordBytes = passwordData.withUnsafeBytes { (passwordPtr: UnsafeRawBufferPointer) -> UnsafePointer<Int8> in
         return passwordPtr.bindMemory(to: Int8.self).baseAddress!
