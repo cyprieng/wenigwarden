@@ -75,4 +75,12 @@ struct AttachmentResponse: Decodable {
         case url
         case key
     }
+
+    /// Initializer for decoding an AttachmentResponse
+    init(from decoder: Decoder) throws {
+        let caseInsensitiveDecoder = CaseInsensitiveDecoder(decoder)
+        let container = try caseInsensitiveDecoder.container(keyedBy: CodingKeys.self)
+        url = try container.decode(String.self, forKey: .url)
+        key = try container.decode(String.self, forKey: .key)
+    }
 }
