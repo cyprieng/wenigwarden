@@ -31,7 +31,23 @@ struct LoginView: View {
     /// The login form view
     private var loginForm: some View {
         Grid(alignment: .leading, horizontalSpacing: 0, verticalSpacing: 15) {
-            formRow(label: "URL", field: urlField)
+            GridRow {
+                Text("Server")
+                Picker("", selection: $viewModel.hostType) {
+                    Text("bitwarden.com")
+                        .tag(BitwardenHost.com)
+                    Text("bitwarden.eu")
+                        .tag(BitwardenHost.eu)
+
+                    Text("Self hosted")
+                        .tag(BitwardenHost.selfHosted)
+                }.labelsHidden()
+            }
+
+            if viewModel.hostType == .selfHosted {
+                formRow(label: "URL", field: urlField)
+            }
+
             formRow(label: "Email", field: emailField)
             formRow(label: "Password", field: passwordField)
         }

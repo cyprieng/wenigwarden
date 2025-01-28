@@ -18,6 +18,7 @@ class AppState: ObservableObject {
 
     // User data properties
     var deviceId: String = ""
+    var hostType: BitwardenHost = .com
     var url: String = ""
     var email: String = ""
     var enableTouchId: Bool = false
@@ -35,7 +36,12 @@ class AppState: ObservableObject {
             deviceId = UUID().uuidString
         }
 
-        url = UserDefaults.standard.string(forKey: "url") ?? "https://bitwarden.com"
+        if let savedHost = UserDefaults.standard.string(forKey: "hostType"),
+           let type = BitwardenHost(rawValue: savedHost) {
+            hostType = type
+        }
+
+        url = UserDefaults.standard.string(forKey: "url") ?? ""
         email = UserDefaults.standard.string(forKey: "email") ?? ""
         enableTouchId = UserDefaults.standard.bool(forKey: "enableTouchId")
         lastVaultSync = UserDefaults.standard.object(forKey: "lastVaultSync") as? Date
@@ -65,6 +71,7 @@ class AppState: ObservableObject {
 
     /// Persists the current state to UserDefaults
     public func persist() {
+        UserDefaults.standard.set(hostType.rawValue, forKey: "hostType")
         UserDefaults.standard.set(url, forKey: "url")
         UserDefaults.standard.set(email, forKey: "email")
         UserDefaults.standard.set(deviceId, forKey: "deviceId")
@@ -74,7 +81,7 @@ class AppState: ObservableObject {
 
     /// Reset current app state
     public func reset() {
-        let keysToRemove = ["url", "email", "deviceId", "enableTouchId", "lastVaultSync"]
+        let keysToRemove = ["hostType", "url", "email", "deviceId", "enableTouchId", "lastVaultSync"]
 
         for key in keysToRemove {
             UserDefaults.standard.removeObject(forKey: key)
@@ -82,6 +89,7 @@ class AppState: ObservableObject {
 
         UserDefaults.standard.synchronize()
 
+        hostType = .com
         deviceId = ""
         url = ""
         email = ""

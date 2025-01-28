@@ -109,22 +109,17 @@ class Vault: ObservableObject {
     /// Logs in the user with the given credentials
     /// - Parameters:
     ///   - email: The user's email address
-    ///   - url: The Bitwarden service URL
     ///   - password: The user's password
     ///   - otp: OTP if needed
-    public func login(email: String, url: String, password: String, otp: String? = nil) async throws {
-        // Set Bitwarden service URL
-        let bitwardenService = BitwardenAPI.shared
-        bitwardenService.host = url
-
+    public func login(email: String, password: String, otp: String? = nil) async throws {
         // Perform prelogin to get KDF iterations
-        let preloginResponse = try await bitwardenService.prelogin(email: email)
+        let preloginResponse = try await BitwardenAPI.shared.prelogin(email: email)
 
         // Login with email, password, and KDF iterations
-        let loginResp = try await bitwardenService.login(email: email,
-                                                         password: password,
-                                                         kdfIterations: preloginResponse.kdfIterations,
-                                                         otp: otp)
+        let loginResp = try await BitwardenAPI.shared.login(email: email,
+                                                            password: password,
+                                                            kdfIterations: preloginResponse.kdfIterations,
+                                                            otp: otp)
 
         // Set encrypted keys and KDF iterations
         setKeys(encryptedEncKey: loginResp.key,

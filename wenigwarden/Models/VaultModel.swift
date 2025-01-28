@@ -66,8 +66,8 @@ struct Login: Codable {
         username = try? container.decode(String.self, forKey: .username)
         password = try? container.decode(String.self, forKey: .password)
         totp = try? container.decode(String.self, forKey: .totp)
-        uri = try container.decode(String.self, forKey: .uri)
-        uris = try container.decode([Uris].self, forKey: .uris)
+        uri = try? container.decode(String.self, forKey: .uri)
+        uris = try? container.decode([Uris].self, forKey: .uris)
     }
 }
 

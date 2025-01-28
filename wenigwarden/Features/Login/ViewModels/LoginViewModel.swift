@@ -10,6 +10,7 @@ import SwiftUI
 
 /// ViewModel for managing the login screen
 class LoginViewModel: ObservableObject {
+    @Published var hostType: BitwardenHost = .com
     @Published var url: String = ""
     @Published var email: String = ""
     @Published var password: String = ""
@@ -19,12 +20,13 @@ class LoginViewModel: ObservableObject {
 
     /// Checks if the form is valid
     var isFormValid: Bool {
-        !url.isEmpty && !email.isEmpty && !password.isEmpty
+        (hostType != .selfHosted || !url.isEmpty) && !email.isEmpty && !password.isEmpty
     }
 
     /// Loads initial values from AppState
     @MainActor
     func loadInitialValues() {
+        hostType = AppState.shared.hostType
         url = AppState.shared.url
         email = AppState.shared.email
 
@@ -74,8 +76,12 @@ class LoginViewModel: ObservableObject {
         let vault = Vault.shared
         let appState = AppState.shared
         appState.email = email
+        appState.hostType = hostType
         appState.url = url
         appState.persist()
+
+        BitwardenAPI.shared.selfHostedURL = url
+        BitwardenAPI.shared.host = hostType
 
         // We can unlock directly if already logged in but not unlocked
         if vault.logged && !vault.unlocked {
@@ -84,16 +90,15 @@ class LoginViewModel: ObservableObject {
 
                 // Update vault in background to ensure vault is up to date
                 Task {
-                    BitwardenAPI.shared.host = url
                     try await vault.updateVault()
                 }
             } catch {
                 // Unlock through API if direct unlock fails
-                try await vault.login(email: email, url: url, password: password, otp: otp)
+                try await vault.login(email: email, password: password, otp: otp)
             }
         } else {
             // Perform login through API
-            try await vault.login(email: email, url: url, password: password, otp: otp)
+            try await vault.login(email: email, password: password, otp: otp)
         }
     }
 }

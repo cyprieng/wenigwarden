@@ -10,11 +10,20 @@ import Alamofire
 import CommonCrypto
 import KeychainAccess
 
+/// Bitwarden host types
+enum BitwardenHost: String {
+    case eu // swiftlint:disable:this identifier_name
+    case com
+    case selfHosted
+}
+
 /// A class to interact with the Bitwarden API
 class BitwardenAPI {
     static let shared = BitwardenAPI()
 
-    var host: String?
+    var host: BitwardenHost?
+    var selfHostedURL: String?
+
     var accessToken: String?
     var refreshToken: String?
 
@@ -74,6 +83,7 @@ class BitwardenAPI {
 
         let response = try await request(method: .post, path: "/identity/connect/token",
                                          encoding: URLEncoding.default,
+                                         headers: ["Auth-Email": email.data(using: .utf8)?.base64EncodedString() ?? ""],
                                          parameters: parameters,
                                          responseType: LoginResponse.self)
 
@@ -130,12 +140,12 @@ class BitwardenAPI {
     }
 
     /// Build API headers
-    private func buildHeaders() -> HTTPHeaders {
-        var headers: HTTPHeaders = []
+    private func buildHeaders(_ headers: HTTPHeaders) -> HTTPHeaders {
+        var newHeaders = headers // Créer une copie mutable
         if let token = accessToken {
-            headers["Authorization"] = "Bearer \(token)"
+            newHeaders["Authorization"] = "Bearer \(token)"
         }
-        return headers
+        return newHeaders
     }
 
     /// Build request url
@@ -143,7 +153,18 @@ class BitwardenAPI {
     ///   - path: The API endpoint path
     private func buildRequestURL(path: String) -> String? {
         guard let host = host else { return nil }
-        return "\(host)\(path)"
+
+        var hostStr: String = ""
+        if host == .com {
+            hostStr = "https://vault.bitwarden.com"
+        } else if host == .eu {
+            hostStr = "https://vault.bitwarden.eu"
+        } else if host == .selfHosted {
+            guard let url = selfHostedURL else { return nil }
+            hostStr = url
+        }
+
+        return "\(hostStr)\(path)"
     }
 
     /// Makes a request to the Bitwarden API
@@ -151,17 +172,19 @@ class BitwardenAPI {
     ///   - method: The HTTP method to use
     ///   - path: The API endpoint path
     ///   - encoding: The parameter encoding to use
+    ///   - headers: headers to send
     ///   - parameters: The parameters to include in the request
     ///   - responseType: The type of the response
     /// - Returns: The decoded response of type `T`
     private func request<T: Decodable>(method: HTTPMethod,
                                        path: String,
                                        encoding: ParameterEncoding,
+                                       headers: HTTPHeaders = [],
                                        parameters: [String: Any]?,
                                        responseType: T.Type,
                                        isRetry: Bool = false) async throws -> T {
         try await withUnsafeThrowingContinuation { continuation in
-            let headers = buildHeaders()
+            let headers = buildHeaders(headers)
 
             guard let url = buildRequestURL(path: path) else {
                 continuation.resume(throwing: URLError(.badURL))
