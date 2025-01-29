@@ -91,6 +91,9 @@ struct SettingsView: View, Hashable {
             Button("Log out", action: viewModel.logout)
                 .padding(.top, 16)
                 .frame(maxWidth: .infinity, alignment: .leading)
+
+            // Version
+            Text("Version: \(viewModel.version ?? "") (Build \(viewModel.buildNumber ?? ""))")
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.vertical, 16)

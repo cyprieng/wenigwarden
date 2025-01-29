@@ -21,6 +21,10 @@ class SettingsViewModel: ObservableObject {
     @Published public var isLoadingSync = false
     @Published public var errorSync = false
 
+    // Version
+    public var version: String?
+    public var buildNumber: String?
+
     /// Load inital value from AppState
     @MainActor
     public func loadInitialState() {
@@ -32,6 +36,10 @@ class SettingsViewModel: ObservableObject {
             dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
             lastVaultSync = dateFormatter.string(from: date)
         }
+
+        // Get version
+        version = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+        buildNumber = Bundle.main.infoDictionary?["CFBundleVersion"] as? String
     }
 
     /// Handle event when touch id value change
