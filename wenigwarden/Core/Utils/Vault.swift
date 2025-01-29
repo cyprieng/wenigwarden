@@ -274,6 +274,10 @@ class Vault: ObservableObject {
     /// - Parameter query: The search query
     /// - Returns: An array of ciphers matching the query
     public func search(query: String) -> [CipherModel] {
-        return ciphersDecrypted.filter { $0.name.lowercased().contains(query.lowercased()) }
+        return ciphersDecrypted.filter {
+            $0.name.lowercased().contains(query.lowercased()) ||
+                ($0.login?.username ?? "").lowercased().contains(query.lowercased()) ||
+                ($0.login?.uri ?? "").lowercased().contains(query.lowercased())
+        }
     }
 }
