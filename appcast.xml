@@ -5,8 +5,8 @@
   <item>
    <title>0.0.1</title>
    <pubDate>Thu, 30 Jan 2025 13:40:16 +0100</pubDate>
-   <sparkle:version>1</sparkle:version>
-   <sparkle:shortVersionString>0.0.1</sparkle:shortVersionString>
+   <sparkle:version>2</sparkle:version>
+   <sparkle:shortVersionString>0.0.2</sparkle:shortVersionString>
    <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
    <enclosure url="https://github.com/cyprieng/wenigwarden/releases/download/v0.0.1/wenigwarden-0.0.1.dmg"
                 type="application/octet-stream" 
