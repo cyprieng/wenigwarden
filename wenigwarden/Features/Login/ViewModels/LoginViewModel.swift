@@ -44,13 +44,13 @@ class LoginViewModel: ObservableObject {
 
     /// Submits the login form
     @MainActor
-    public func submitForm() {
+    internal func submitForm() {
         self.submitForm(otp: nil)
     }
 
     /// Submits the login form
     @MainActor
-    public func submitForm(otp: String? = nil) {
+    internal func submitForm(otp: String? = nil) {
         guard isFormValid else { return }
         Task {
             do {
@@ -71,7 +71,7 @@ class LoginViewModel: ObservableObject {
     }
 
     /// Performs the login action
-    public func login(otp: String? = nil) async throws {
+    internal func login(otp: String? = nil) async throws {
         // Save data in app state service
         let vault = Vault.shared
         let appState = AppState.shared

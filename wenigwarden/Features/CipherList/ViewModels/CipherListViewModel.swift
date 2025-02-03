@@ -41,7 +41,7 @@ class CipherListViewModel: ObservableObject {
     // Sync timer
     private var syncTimer: AnyCancellable?
 
-    public init() {
+    internal init() {
         // Keyboard shortcuts
         if !CipherListViewModel.isEventAdded {  // Make sure to not bind it twice
             CipherListViewModel.isEventAdded = true
@@ -85,13 +85,13 @@ class CipherListViewModel: ObservableObject {
 
     /// Loads the initial list of ciphers when the view appears
     @MainActor
-    public func loadInitialCiphers() {
+    internal func loadInitialCiphers() {
         performSearch(searchQuery)
     }
 
     /// Performs a search based on the user's query
     /// - Parameter query: The search query entered by the user
-    public func performSearch(_ query: String) {
+    internal func performSearch(_ query: String) {
         if query.isEmpty {
             ciphers = Vault.shared.ciphersDecrypted
         } else {
@@ -100,7 +100,7 @@ class CipherListViewModel: ObservableObject {
     }
 
     /// Go to cipher details
-    public func goToDetails(_ cipher: CipherModel, index: Int) {
+    internal func goToDetails(_ cipher: CipherModel, index: Int) {
         minHeight = nil
 
         // Select item
@@ -112,7 +112,7 @@ class CipherListViewModel: ObservableObject {
     }
 
     /// Go to cipher details
-    public func goToSettings() {
+    internal func goToSettings() {
         minHeight = nil
         path.append(SettingsView(refreshList: {
             Task {
@@ -122,7 +122,7 @@ class CipherListViewModel: ObservableObject {
     }
 
     // Start background vault sync
-    public func startSyncJob() {
+    internal func startSyncJob() {
         syncTimer = Timer.publish(every: 60 * 15, on: .main, in: .common)
             .autoconnect()
             .sink { _ in
@@ -134,13 +134,13 @@ class CipherListViewModel: ObservableObject {
     }
 
     // Stop background vault sync
-    public func stopSyncJob() {
+    internal func stopSyncJob() {
         syncTimer?.cancel()
         syncTimer = nil
     }
 
     /// When list appear
-    public func onAppear() {
+    internal func onAppear() {
         if path.count == 0 {
             minHeight = defaultMinHeight // Reset height
         }

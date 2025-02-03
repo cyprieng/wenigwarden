@@ -18,12 +18,6 @@ struct VaultModel: Codable {
         case profile
     }
 
-    /// Initializer for creating a new vault model
-    init(ciphers: [CipherModel], profile: Profile) {
-        self.ciphers = ciphers
-        self.profile = profile
-    }
-
     /// Initializer for decoding a vault model
     init(from decoder: Decoder) throws {
         let caseInsensitiveDecoder = CaseInsensitiveDecoder(decoder)
@@ -104,11 +98,6 @@ struct Profile: Codable {
         case organizations
     }
 
-    /// Initializer for creating a new profile model
-    init(organizations: [Organization]) {
-        self.organizations = organizations
-    }
-
     /// Initializer for decoding a profile model
     init(from decoder: Decoder) throws {
         let caseInsensitiveDecoder = CaseInsensitiveDecoder(decoder)
@@ -119,6 +108,7 @@ struct Profile: Codable {
 
 /// Model representing an organization
 struct Organization: Codable {
+    // periphery:ignore
     let id: String
     let key: String
 
@@ -126,12 +116,6 @@ struct Organization: Codable {
     enum CodingKeys: String, CodingKey {
         case id
         case key
-    }
-
-    /// Initializer for creating a new organization model
-    init(id: String, key: String) {
-        self.id = id
-        self.key = key
     }
 
     /// Initializer for decoding an organization model
@@ -337,8 +321,7 @@ struct Attachment: Codable, Identifiable {
 
     /// Initializer for creating a new attachment model
     init(id: String? = nil,
-         fileName: String? = nil,
-         key: String? = nil) {
+         fileName: String? = nil) {
         self.id = id
         self.fileName = fileName
     }

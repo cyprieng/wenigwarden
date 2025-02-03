@@ -358,7 +358,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "PATH=${PATH}:/opt/homebrew/bin/\nperiphery scan --format xcode\n";
+			shellScript = "PATH=${PATH}:/opt/homebrew/bin/\nperiphery scan --config ${PROJECT_DIR}/wenigwarden/Config/.periphery.yml --format xcode\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

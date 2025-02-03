@@ -10,24 +10,24 @@ import Foundation
 /// ViewModel for managing the settings
 class SettingsViewModel: ObservableObject {
     // Touch id
-    @Published public var enableTouchId: Bool = false
-    @Published public var showPasswordInput: Bool = false
-    @Published public var password: String = ""
-    @Published public var errorTouchId: Bool = false
-    @Published public var isLoadingTouchId = false
+    @Published internal var enableTouchId: Bool = false
+    @Published internal var showPasswordInput: Bool = false
+    @Published internal var password: String = ""
+    @Published internal var errorTouchId: Bool = false
+    @Published internal var isLoadingTouchId = false
 
     // Sync
-    @Published public var lastVaultSync: String?
-    @Published public var isLoadingSync = false
-    @Published public var errorSync = false
+    @Published internal var lastVaultSync: String?
+    @Published internal var isLoadingSync = false
+    @Published internal var errorSync = false
 
     // Version
-    public var version: String?
-    public var buildNumber: String?
+    internal var version: String?
+    internal var buildNumber: String?
 
     /// Load inital value from AppState
     @MainActor
-    public func loadInitialState() {
+    internal func loadInitialState() {
         enableTouchId = AppState.shared.enableTouchId
 
         // Load last sync date
@@ -43,7 +43,7 @@ class SettingsViewModel: ObservableObject {
     }
 
     /// Handle event when touch id value change
-    public func handleTouchIdChange() {
+    internal func handleTouchIdChange() {
         if enableTouchId && !AppState.shared.enableTouchId {
             // Ask for password to enable touchid
             showPasswordInput = true
@@ -58,7 +58,7 @@ class SettingsViewModel: ObservableObject {
 
     /// Enable touch id
     @MainActor
-    public func doEnableTouchId() {
+    internal func doEnableTouchId() {
         // Abort if password is empty
         if password.isEmpty {
             return
@@ -87,7 +87,7 @@ class SettingsViewModel: ObservableObject {
 
     /// Sync the vaule
     @MainActor
-    public func syncVault(_ refreshList: @escaping () -> Void) {
+    internal func syncVault(_ refreshList: @escaping () -> Void) {
         Task {
             self.isLoadingSync = true
             do {
@@ -102,7 +102,7 @@ class SettingsViewModel: ObservableObject {
     }
 
     /// Logout action
-    public func logout() {
+    internal func logout() {
         AppState.shared.reset()
         Vault.shared.reset()
     }

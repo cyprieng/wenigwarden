@@ -63,14 +63,14 @@ class AppState: ObservableObject {
     }
 
     /// Toggle app visibility
-    public func toggleAppVisibility() {
+    internal func toggleAppVisibility() {
         for window in NSApplication.shared.windows {
             (window.value(forKey: "statusItem")as? NSStatusItem)?.button?.performClick(nil)
         }
     }
 
     /// Persists the current state to UserDefaults
-    public func persist() {
+    internal func persist() {
         UserDefaults.standard.set(hostType.rawValue, forKey: "hostType")
         UserDefaults.standard.set(url, forKey: "url")
         UserDefaults.standard.set(email, forKey: "email")
@@ -80,7 +80,7 @@ class AppState: ObservableObject {
     }
 
     /// Reset current app state
-    public func reset() {
+    internal func reset() {
         let keysToRemove = ["hostType", "url", "email", "deviceId", "enableTouchId", "lastVaultSync"]
 
         for key in keysToRemove {

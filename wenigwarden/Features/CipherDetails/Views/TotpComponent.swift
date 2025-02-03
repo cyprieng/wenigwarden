@@ -33,7 +33,6 @@ struct TotpComponent: View {
 /// TOTP helper
 class TotpHelper: ObservableObject {
     var totp: TOTP?  // Lib TOTP
-    var timer: Timer?  // Update timer
 
     @Published var currentTotp: String = ""  // Current totp
     @Published var currentSeconds: Int = 0  // Current seconds remaining
@@ -48,7 +47,7 @@ class TotpHelper: ObservableObject {
                 self.updateTotp()
 
                 // Update every seconds
-                timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) {[weak self] timer in
+                Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) {[weak self] timer in
                     guard let self = self else {
                         timer.invalidate()
                         return

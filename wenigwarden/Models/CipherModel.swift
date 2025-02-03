@@ -17,7 +17,6 @@ struct CipherModel: Codable, Identifiable {
     var organizationId: String?
     var deletedDate: String?
     var key: String?
-    var image: Image?
     var notes: String?
     var fields: [CustomFields]?
     var card: Card?
@@ -128,7 +127,7 @@ struct CipherModel: Codable, Identifiable {
 
     /// Decrypts the cipher using the provided organization keys
     /// - Returns: Decrypted cipher model or nil if the cipher is deleted
-    public func decryptCipher() throws -> CipherModel? {
+    internal func decryptCipher() throws -> CipherModel? {
         // Return nil if the cipher is deleted
         if deletedDate != nil {
             return nil
@@ -196,7 +195,7 @@ struct CipherModel: Codable, Identifiable {
 
     /// Retrieves the favicon for the cipher's URI
     /// - Returns: The favicon image or nil if not available
-    public func getFavicon() async -> Image? {
+    internal func getFavicon() async -> Image? {
         guard let uriString = login?.uri,
               let url = URL(string: uriString),
               let hostname = url.host,
@@ -231,7 +230,7 @@ struct CipherModel: Codable, Identifiable {
     }
 
     /// Download attachment
-    public func downloadAttachment(_ attachmentId: String) async {
+    internal func downloadAttachment(_ attachmentId: String) async {
         let data = try? await BitwardenAPI.shared.getAttachmentData(cipherId: id, attachmentId: attachmentId)
         if let urlString = data?.url, !urlString.isEmpty {
             guard let url = URL(string: urlString) else { return }

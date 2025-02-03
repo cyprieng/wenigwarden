@@ -38,7 +38,7 @@ class BitwardenAPI {
     /// Performs a prelogin to get KDF iterations
     /// - Parameter email: The user's email
     /// - Returns: A `PreloginResponse` containing KDF iterations
-    public func prelogin(email: String) async throws -> PreloginResponse {
+    internal func prelogin(email: String) async throws -> PreloginResponse {
         return try await request(method: .post, path: "/identity/accounts/prelogin",
                                  encoding: JSONEncoding.default, parameters: [
                                     "email": email
@@ -52,10 +52,10 @@ class BitwardenAPI {
     ///   - kdfIterations: The number of KDF iterations
     ///   - otp: OTP if needed
     /// - Returns: A `LoginResponse` containing tokens and keys
-    public func login(email: String,
-                      password: String,
-                      kdfIterations: Int,
-                      otp: String? = nil) async throws -> LoginResponse {
+    internal func login(email: String,
+                        password: String,
+                        kdfIterations: Int,
+                        otp: String? = nil) async throws -> LoginResponse {
         let masterKey = generateMasterKey(email: email, password: password, kdfIterations: kdfIterations)
 
         let key = pbkdf2(hash: CCPBKDFAlgorithm(kCCPRFHmacAlgSHA256),
@@ -103,7 +103,7 @@ class BitwardenAPI {
     }
 
     /// Refresh access token using refresh token
-    public func refreshAccessToken(_ refreshToken: String)  async throws {
+    internal func refreshAccessToken(_ refreshToken: String)  async throws {
         let response = try await request(method: .post, path: "/identity/connect/token",
                                          encoding: URLEncoding.default,
                                          parameters: [
@@ -120,7 +120,7 @@ class BitwardenAPI {
     }
 
     /// Get attachment data
-    public func getAttachmentData(cipherId: String, attachmentId: String) async throws -> AttachmentResponse {
+    internal func getAttachmentData(cipherId: String, attachmentId: String) async throws -> AttachmentResponse {
         let response = try await request(method: .get, path: "/api/ciphers/\(cipherId)/attachment/\(attachmentId)",
                                          encoding: URLEncoding.default,
                                          parameters: nil,
@@ -131,7 +131,7 @@ class BitwardenAPI {
 
     /// Synchronizes the vault with the server
     /// - Returns: A `VaultModel` containing the synchronized vault data
-    public func sync() async throws -> VaultModel {
+    internal func sync() async throws -> VaultModel {
         return try await request(method: .get,
                                  path: "/api/sync",
                                  encoding: JSONEncoding.default,

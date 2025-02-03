@@ -57,7 +57,7 @@ class Vault: ObservableObject {
     }
 
     /// Set password in keychain for touchid
-    public func setTouchIdPassword(_ password: String) {
+    internal func setTouchIdPassword(_ password: String) {
         // Always remove first as override cause issue
         try? keychain.remove("touchidpassword")
 
@@ -73,7 +73,7 @@ class Vault: ObservableObject {
     }
 
     /// Get password from touchid keychain
-    public func getTouchIdPassword() -> String? {
+    internal func getTouchIdPassword() -> String? {
         return try? Vault.shared.keychain
             .authenticationPrompt("Authenticate to get your password")
             .get("touchidpassword") as String?
@@ -111,7 +111,7 @@ class Vault: ObservableObject {
     ///   - email: The user's email address
     ///   - password: The user's password
     ///   - otp: OTP if needed
-    public func login(email: String, password: String, otp: String? = nil) async throws {
+    internal func login(email: String, password: String, otp: String? = nil) async throws {
         // Perform prelogin to get KDF iterations
         let preloginResponse = try await BitwardenAPI.shared.prelogin(email: email)
 
@@ -134,7 +134,7 @@ class Vault: ObservableObject {
     }
 
     /// Synchronizes the vault with the server
-    public func sync() async throws {
+    internal func sync() async throws {
         let vault = try await BitwardenAPI.shared.sync()
         ciphers = vault.ciphers
         profile = vault.profile
@@ -153,7 +153,7 @@ class Vault: ObservableObject {
     }
 
     /// Update the vaule by syncing and unlocking it
-    public func updateVault() async throws {
+    internal func updateVault() async throws {
         // Synchronize the vault
         try await sync()
 
@@ -166,7 +166,7 @@ class Vault: ObservableObject {
     ///   - encryptedEncKey: The encrypted encryption key
     ///   - encryptedPrivateKey: The encrypted private key
     ///   - kdfIterations: The number of key derivation function iterations
-    public func setKeys(encryptedEncKey: String, encryptedPrivateKey: String, kdfIterations: Int) {
+    internal func setKeys(encryptedEncKey: String, encryptedPrivateKey: String, kdfIterations: Int) {
         self.encryptedEncKey = encryptedEncKey
         self.encryptedPrivateKey = encryptedPrivateKey
         self.kdfIterations = kdfIterations
@@ -180,13 +180,13 @@ class Vault: ObservableObject {
     }
 
     /// Unlocks the vault using the current encryption key
-    public func unlock() async throws {
+    internal func unlock() async throws {
         return try await self.unlock(masterKey: self.masterKey!)
     }
 
     /// Unlocks the vault using the user's password
     /// - Parameter password: The user's password
-    public func unlock(password: String) async throws {
+    internal func unlock(password: String) async throws {
         let appState = AppState.shared
         let masterKey = generateMasterKey(email: appState.email, password: password, kdfIterations: self.kdfIterations!)
         return try await self.unlock(masterKey: masterKey!)
@@ -194,7 +194,7 @@ class Vault: ObservableObject {
 
     /// Unlocks the vault using the master key
     /// - Parameter masterKey: The master key
-    public func unlock(masterKey: Data) async throws {
+    internal func unlock(masterKey: Data) async throws {
         self.masterKey = masterKey
         self.encKey = try decrypt(encKey: [UInt8](masterKey), str: encryptedEncKey!)
 
@@ -241,7 +241,7 @@ class Vault: ObservableObject {
     }
 
     /// Locks the vault, clearing decrypted data
-    public func lock() {
+    internal func lock() {
         unlocked = false
         ciphersDecrypted = []
         masterKey = nil
@@ -251,7 +251,7 @@ class Vault: ObservableObject {
     }
 
     /// Reset vault
-    public func reset() {
+    internal func reset() {
         try? keychain.remove("touchidpassword")
         try? keychain.remove("ciphers")
         try? keychain.remove("profile")
@@ -273,7 +273,7 @@ class Vault: ObservableObject {
     /// Searches for ciphers matching the query
     /// - Parameter query: The search query
     /// - Returns: An array of ciphers matching the query
-    public func search(query: String) -> [CipherModel] {
+    internal func search(query: String) -> [CipherModel] {
         return ciphersDecrypted.filter {
             $0.name.lowercased().contains(query.lowercased()) ||
                 ($0.login?.username ?? "").lowercased().contains(query.lowercased()) ||
