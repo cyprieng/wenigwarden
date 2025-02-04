@@ -34,10 +34,10 @@ final class AppState: ObservableObject {
     /// Private initializer to enforce singleton pattern
     private init() {
         // Init sparkle updater
-        updaterController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
-            self.updaterController.checkForUpdates(nil)
-        }
+        updaterController = SPUStandardUpdaterController(startingUpdater: true,
+                                                         updaterDelegate: nil,
+                                                         userDriverDelegate: nil)
+        self.updaterController.updater.checkForUpdatesInBackground()
 
         // Retrieve stored values or provide default values
         deviceId = UserDefaults.standard.string(forKey: "deviceId") ?? ""
