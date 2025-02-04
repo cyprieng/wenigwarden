@@ -62,6 +62,10 @@ class LoginViewModel: ObservableObject {
                 if let errorResponse = error as? ErrorResponse,
                    let description = errorResponse.errorDescription,
                    description == "Two factor required." {
+                    // Save two factor provider
+                    if !(errorResponse.twoFactorProviders?.isEmpty ?? false) {
+                        BitwardenAPI.shared.twoFactorProvider = errorResponse.twoFactorProviders![0].stringValue
+                    }
                     self.otpNeeded = true
                 } else {
                     self.error = true

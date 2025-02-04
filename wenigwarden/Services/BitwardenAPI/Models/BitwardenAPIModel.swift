@@ -10,9 +10,39 @@ import Foundation
 /// Model for Bitwarden errors
 struct ErrorResponse: Decodable, Error {
     let errorDescription: String?
+    let twoFactorProviders: [TwoFactorProvider]?
 
     enum CodingKeys: String, CodingKey {
         case errorDescription = "error_description"
+        case twoFactorProviders = "TwoFactorProviders"
+    }
+
+    enum TwoFactorProvider: Decodable {
+        case integer(Int)
+        case string(String)
+
+        init(from decoder: Decoder) throws {
+            let container = try decoder.singleValueContainer()
+            if let intValue = try? container.decode(Int.self) {
+                self = .integer(intValue)
+            } else if let stringValue = try? container.decode(String.self) {
+                self = .string(stringValue)
+            } else {
+                throw DecodingError.typeMismatch(TwoFactorProvider.self, DecodingError.Context(
+                    codingPath: decoder.codingPath,
+                    debugDescription: "Expected Int or String"
+                ))
+            }
+        }
+
+        var stringValue: String {
+            switch self {
+            case .integer(let int):
+                return String(int)
+            case .string(let str):
+                return str
+            }
+        }
     }
 }
 

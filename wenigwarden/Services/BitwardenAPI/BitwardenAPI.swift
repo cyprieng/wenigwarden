@@ -30,6 +30,10 @@ class BitwardenAPI {
     // Keychain to store refresh token
     var keychain: Keychain
 
+    // Store two factor provider
+    // Basic implementation that should be improved to support multiple
+    var twoFactorProvider: String?
+
     private init() {
         keychain = Keychain(service: "io.cyprien.wenigwarden")
         refreshToken = try? keychain.get("refreshToken")
@@ -79,6 +83,10 @@ class BitwardenAPI {
         // Add OTP
         if otp != nil {
             parameters["twoFactorToken"] = otp
+
+            if let provider = twoFactorProvider, !provider.isEmpty {
+                parameters["twoFactorProvider"] = provider
+            }
         }
 
         let response = try await request(method: .post, path: "/identity/connect/token",
