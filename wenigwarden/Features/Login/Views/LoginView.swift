@@ -9,7 +9,7 @@ import SwiftUI
 
 /// The login screen view
 struct LoginView: View {
-    @StateObject var viewModel: LoginViewModel = LoginViewModel()
+    @StateObject private var viewModel: LoginViewModel = LoginViewModel()
 
     var body: some View {
         VStack(spacing: 20) {

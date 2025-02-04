@@ -22,30 +22,30 @@ class Vault: ObservableObject {
     @Published var unlocked: Bool = false
 
     // Indicates if the user is logged in
-    var logged: Bool = false
+    private(set) var logged: Bool = false
 
     // Keychain instance for storing sensitive data
-    var keychain: Keychain
+    private var keychain: Keychain
 
     // Arrays to store ciphers and decrypted ciphers
-    var ciphers: [CipherModel]
-    var ciphersDecrypted: [CipherModel]
+    private var ciphers: [CipherModel]
+    private(set) var ciphersDecrypted: [CipherModel]
 
     // User profile
-    var profile: Profile?
+    private var profile: Profile?
 
     // Encrypted keys
-    var encryptedPrivateKey: String?
-    var encryptedEncKey: String?
+    private var encryptedPrivateKey: String?
+    private var encryptedEncKey: String?
 
     // Key derivation function iterations
-    var kdfIterations: Int?
+    private var kdfIterations: Int?
 
     // Keys
-    var masterKey: Data?
-    var privateKey: SecKey?
-    var encKey: [UInt8]?
-    var orgsKey: [String: [UInt8]] = [:]
+    private var masterKey: Data?
+    private var privateKey: SecKey?
+    private(set) var encKey: [UInt8]?
+    private(set) var orgsKey: [String: [UInt8]] = [:]
 
     /// Private initializer to enforce singleton pattern
     private init() {
@@ -238,6 +238,12 @@ class Vault: ObservableObject {
                 self.unlocked = true
             }
         }
+    }
+
+    /// Set unlogged without resetting any data
+    public func setUnlogged() {
+        self.logged = false
+        self.unlocked = false
     }
 
     /// Locks the vault, clearing decrypted data

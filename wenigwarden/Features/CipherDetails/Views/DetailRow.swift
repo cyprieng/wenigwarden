@@ -7,11 +7,31 @@
 
 import SwiftUI
 
-/// Component for a text: value with a copy button
+/// A view component to display a labeled detail with copy functionality
 struct DetailRow: View {
-    let title: String
-    let value: String
-    let copyKeyCode: String?
+    /// The label or title for the detail
+    private let title: String
+
+    /// The value to display
+    private let value: String
+
+    /// Optional keyboard shortcut for copying the value
+    private let copyKeyCode: String?
+
+    /// Initialize detail row
+    /// - Parameters:
+    ///   - title: The label for the detail
+    ///   - value: The value to display
+    ///   - copyKeyCode: Optional keyboard shortcut for copying
+    init(
+        title: String,
+        value: String,
+        copyKeyCode: String? = nil
+    ) {
+        self.title = title
+        self.value = value
+        self.copyKeyCode = copyKeyCode
+    }
 
     var body: some View {
         GridRow {
@@ -19,7 +39,10 @@ struct DetailRow: View {
 
             TextValue(text: value)
 
-            ClipboardButton(data: value, copyKeyCode: copyKeyCode)
+            ClipboardButton(
+                data: value,
+                copyKeyCode: copyKeyCode
+            )
         }
     }
 }

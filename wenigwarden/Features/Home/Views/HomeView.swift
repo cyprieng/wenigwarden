@@ -9,7 +9,7 @@ import SwiftUI
 
 /// The main home view of the application
 struct HomeView: View {
-    @ObservedObject var vault = Vault.shared
+    @ObservedObject private var vault = Vault.shared
 
     var body: some View {
         VStack {

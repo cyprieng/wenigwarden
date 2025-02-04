@@ -10,10 +10,10 @@ import SwiftUI
 /// A view that presents a button to copy data to the clipboard
 struct ClipboardButton: View {
     /// The data to be copied to the clipboard
-    @State var data: String
+    private let data: String
 
     /// The copy keycode shortcuts
-    @State var copyKeyCode: String?
+    private let copyKeyCode: String?
 
     /// Indicates whether the copied icon should be shown
     @State private var showCopiedIcon: Bool = false
@@ -24,6 +24,15 @@ struct ClipboardButton: View {
     /// Store monitor
     @State private var keyListener: Any?
     @State private var cmdListener: Any?
+
+    /// Initialize a new ClipboardButton
+    /// - Parameters:
+    ///   - data: The string to be copied to clipboard
+    ///   - copyKeyCode: Optional keyboard shortcut key
+    init(data: String, copyKeyCode: String? = nil) {
+        self.data = data
+        self.copyKeyCode = copyKeyCode
+    }
 
     var body: some View {
         Button(action: {

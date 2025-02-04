@@ -9,142 +9,169 @@ import Foundation
 import SwiftUI
 import Combine
 
-// Default height for the list
-let defaultMinHeight: CGFloat = 400
+/// Default height for the cipher list view
+private let defaultMinHeight: CGFloat = 400
 
-/// ViewModel for managing the list of ciphers
-class CipherListViewModel: ObservableObject {
-    /// The list of ciphers to display
-    @Published var ciphers: [CipherModel]?
+/// ViewModel for managing the list of vault ciphers and related UI state
+final class CipherListViewModel: ObservableObject {
+    /// The filtered list of ciphers to display
+    @Published private(set) var ciphers: [CipherModel]?
 
-    /// The search query entered by the user
+    /// The current search query
     @Published var searchQuery = ""
 
-    /// Min height for the view
+    /// Minimum height for the view
     @Published var minHeight: CGFloat? = defaultMinHeight
 
-    /// Navigation path
+    /// Navigation stack path
     @Published var path = NavigationPath()
 
-    /// Currently ocused cipher
+    /// Index of the currently focused cipher
     @Published var focusedCipherIndex: Int? = 0
 
-    /// Persistent storage of focused cipher to select it agin when going back
-    private static var staticFocusedCipherIndex: Int? = 0
-
-    /// Focus binding for search field
+    /// Focus state for the search field
     @Published var isSearchFieldFocused: Bool = false
 
-    /// Persist if we already bound the keyboard events
+    /// Persisted focused cipher index across view updates
+    private static var staticFocusedCipherIndex: Int? = 0
+
+    /// Flag to prevent multiple keyboard event bindings
     private static var isEventAdded = false
 
-    // Sync timer
+    /// Timer for periodic vault synchronization
     private var syncTimer: AnyCancellable?
 
-    internal init() {
-        // Keyboard shortcuts
-        if !CipherListViewModel.isEventAdded {  // Make sure to not bind it twice
-            CipherListViewModel.isEventAdded = true
-            NSEvent.addLocalMonitorForEvents(matching: [.keyDown]) { [self] nsevent in
-                if CipherListViewModel.staticFocusedCipherIndex != nil {
-                    if path.isEmpty {
-                        if nsevent.keyCode == 125 { // arrow down -> move selection dozn
-                            CipherListViewModel.staticFocusedCipherIndex = CipherListViewModel.staticFocusedCipherIndex!
-                                < ciphers!.count ?
-                                CipherListViewModel.staticFocusedCipherIndex! + 1 : 0
-                        } else if nsevent.keyCode == 126 { // arrow up -> move selection up
-                            CipherListViewModel.staticFocusedCipherIndex = CipherListViewModel.staticFocusedCipherIndex!
-                                > 1 ? CipherListViewModel.staticFocusedCipherIndex! - 1 : 0
-                        } else if nsevent.keyCode == 36 { // enter -> go to details
-                            goToDetails(ciphers![CipherListViewModel.staticFocusedCipherIndex!],
-                                        index: CipherListViewModel.staticFocusedCipherIndex!)
-                        } else if nsevent.keyCode == 53 { // escape -> go back
-                            AppState.shared.toggleAppVisibility()
-                        } else if !isSearchFieldFocused {
-                            // Otherwise -> bring back focus to search field if we are on the list
-                            isSearchFieldFocused = true
-                        } else {
-                            return nsevent
-                        }
+    /// Initialize the view model and set up keyboard shortcuts
+    init() {
+        setupKeyboardShortcuts()
+    }
 
-                        // Set focused cipher
-                        focusedCipherIndex = CipherListViewModel.staticFocusedCipherIndex
-                    } else {
-                        if nsevent.keyCode == 53 { // escape -> go back
-                            path.removeLast()
-                        } else {
-                            return nsevent
-                        }
-                    }
-                }
+    /// Sets up keyboard shortcuts for navigation and actions
+    private func setupKeyboardShortcuts() {
+        guard !CipherListViewModel.isEventAdded else { return }
 
-                return nil
+        CipherListViewModel.isEventAdded = true
+        NSEvent.addLocalMonitorForEvents(matching: [.keyDown]) { [weak self] event in
+            guard let self = self,
+                  let focusedIndex = CipherListViewModel.staticFocusedCipherIndex else {
+                return event
             }
+
+            return self.handleKeyboardEvent(event, focusedIndex: focusedIndex)
         }
     }
 
-    /// Loads the initial list of ciphers when the view appears
+    /// Handles keyboard events for navigation and actions
+    /// - Parameters:
+    ///   - event: The keyboard event
+    ///   - focusedIndex: Currently focused cipher index
+    /// - Returns: The event if it should be processed further, nil if handled
+    private func handleKeyboardEvent(_ event: NSEvent, focusedIndex: Int) -> NSEvent? {
+        if path.isEmpty {
+            return handleListViewKeyboardEvent(event, focusedIndex: focusedIndex)
+        } else {
+            return handleDetailViewKeyboardEvent(event)
+        }
+    }
+
+    /// Handles keyboard events when in list view
+    private func handleListViewKeyboardEvent(_ event: NSEvent, focusedIndex: Int) -> NSEvent? {
+        guard let ciphers = ciphers else { return event }
+
+        switch event.keyCode {
+        case 125: // Down arrow
+            CipherListViewModel.staticFocusedCipherIndex = (focusedIndex < ciphers.count) ?
+                focusedIndex + 1 : 0
+
+        case 126: // Up arrow
+            CipherListViewModel.staticFocusedCipherIndex = (focusedIndex > 1) ?
+                focusedIndex - 1 : 0
+
+        case 36: // Enter
+            goToDetails(ciphers[focusedIndex], index: focusedIndex)
+
+        case 53: // Escape
+            AppState.shared.toggleAppVisibility()
+
+        default:
+            if !isSearchFieldFocused {
+                isSearchFieldFocused = true
+            } else {
+                return event
+            }
+        }
+
+        focusedCipherIndex = CipherListViewModel.staticFocusedCipherIndex
+        return nil
+    }
+
+    /// Handles keyboard events when in detail view
+    private func handleDetailViewKeyboardEvent(_ event: NSEvent) -> NSEvent? {
+        if event.keyCode == 53 { // Escape
+            path.removeLast()
+            return nil
+        }
+        return event
+    }
+
+    /// Loads the initial list of ciphers
     @MainActor
-    internal func loadInitialCiphers() {
+    func loadInitialCiphers() {
         performSearch(searchQuery)
     }
 
-    /// Performs a search based on the user's query
-    /// - Parameter query: The search query entered by the user
-    internal func performSearch(_ query: String) {
-        if query.isEmpty {
-            ciphers = Vault.shared.ciphersDecrypted
-        } else {
-            ciphers = Vault.shared.search(query: query)
-        }
+    /// Performs a search based on the query
+    /// - Parameter query: The search query
+    func performSearch(_ query: String) {
+        ciphers = query.isEmpty ?
+            Vault.shared.ciphersDecrypted :
+            Vault.shared.search(query: query)
     }
 
-    /// Go to cipher details
-    internal func goToDetails(_ cipher: CipherModel, index: Int) {
+    /// Navigates to cipher details
+    /// - Parameters:
+    ///   - cipher: The cipher to display
+    ///   - index: Index of the cipher in the list
+    func goToDetails(_ cipher: CipherModel, index: Int) {
         minHeight = nil
-
-        // Select item
         CipherListViewModel.staticFocusedCipherIndex = index
-        focusedCipherIndex = CipherListViewModel.staticFocusedCipherIndex
-
-        // Redirect to item
+        focusedCipherIndex = index
         path.append(CipherDetailsView(cipher: cipher))
     }
 
-    /// Go to cipher details
-    internal func goToSettings() {
+    /// Navigates to settings view
+    func goToSettings() {
         minHeight = nil
-        path.append(SettingsView(refreshList: {
-            Task {
-                await self.loadInitialCiphers()
+        path.append(SettingsView(refreshList: { [weak self] in
+            Task { [weak self] in
+                await self?.loadInitialCiphers()
             }
         }))
     }
 
-    // Start background vault sync
-    internal func startSyncJob() {
+    /// Starts periodic vault synchronization
+    func startSyncJob() {
         syncTimer = Timer.publish(every: 60 * 15, on: .main, in: .common)
             .autoconnect()
-            .sink { _ in
-                Task {
+            .sink { [weak self] _ in
+                Task { [weak self] in
                     try await Vault.shared.updateVault()
-                    await self.loadInitialCiphers()
+                    await self?.loadInitialCiphers()
                 }
             }
     }
 
-    // Stop background vault sync
-    internal func stopSyncJob() {
+    /// Stops periodic vault synchronization
+    func stopSyncJob() {
         syncTimer?.cancel()
         syncTimer = nil
     }
 
-    /// When list appear
-    internal func onAppear() {
-        if path.count == 0 {
-            minHeight = defaultMinHeight // Reset height
+    /// Handles view appearance
+    func onAppear() {
+        if path.isEmpty {
+            minHeight = defaultMinHeight
         }
-
-        focusedCipherIndex = CipherListViewModel.staticFocusedCipherIndex  // Reset selected cipher
+        focusedCipherIndex = CipherListViewModel.staticFocusedCipherIndex
     }
 }

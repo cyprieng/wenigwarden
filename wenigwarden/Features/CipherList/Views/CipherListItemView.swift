@@ -8,26 +8,35 @@
 import SwiftUI
 
 /// A view representing an item in the list of ciphers
+/// A view that displays a single cipher item in the list
 struct CipherListItemView: View {
+    /// The cipher model to display
     @Binding var cipher: CipherModel
+
+    /// The favicon image for the cipher
     @State private var faviconImage: Image?
-    var goToDetails: () -> Void
+
+    /// Callback for navigating to details view
+    private let goToDetails: () -> Void
+
+    /// Initialize the cipher list item view
+    /// - Parameters:
+    ///   - cipher: Binding to the cipher model
+    ///   - goToDetails: Callback for navigation
+    init(cipher: Binding<CipherModel>, goToDetails: @escaping () -> Void) {
+        self._cipher = cipher
+        self.goToDetails = goToDetails
+    }
 
     var body: some View {
         HStack {
             faviconImageView
             itemDetails
-
             Spacer()
-
-            Button(action: {
-                goToDetails()
-            }, label: {
-                Image(systemName: "note.text")
-            })
+            detailsButton
         }
         .padding(5)
-        .onChange(of: cipher.id, initial: true) { _, _  in
+        .onChange(of: cipher.id, initial: true) { _, _ in
             loadFavicon()
         }
     }
@@ -35,14 +44,24 @@ struct CipherListItemView: View {
     /// View for displaying the favicon image
     private var faviconImageView: some View {
         ZStack {
-            // Base icon
-            Image(systemName: getDefaultImage())
-                .resizable()
-                .scaledToFit()
-                .foregroundColor(.gray)
-                .frame(width: 16, height: 16)
+            defaultIcon
+            faviconOverlay
+        }
+        .frame(width: 16, height: 16)
+    }
 
-            // Favicon overlay when available
+    /// Default icon based on cipher type
+    private var defaultIcon: some View {
+        Image(systemName: getDefaultImage())
+            .resizable()
+            .scaledToFit()
+            .foregroundColor(.gray)
+            .frame(width: 16, height: 16)
+    }
+
+    /// Favicon overlay when available
+    private var faviconOverlay: some View {
+        Group {
             if let favicon = faviconImage {
                 favicon
                     .resizable()
@@ -51,58 +70,66 @@ struct CipherListItemView: View {
                     .transition(.opacity)
             }
         }
-        .frame(width: 16, height: 16)
     }
 
-    /// View for displaying the item details (name and username)
+    /// View for displaying item details
     private var itemDetails: some View {
         VStack(alignment: .leading) {
             Text(cipher.name)
                 .lineLimit(1)
                 .truncationMode(.tail)
 
-            if cipher.type == 3 {
-                Text("*\(cipher.card?.number?.suffix(4) ?? "")")
-                    .lineLimit(1)
-                    .truncationMode(.tail)
-            } else if cipher.type == 4 {
-                Text("\(cipher.identity?.firstName ?? "") \(cipher.identity?.lastName ?? "")")
-                    .lineLimit(1)
-                    .truncationMode(.tail)
-            } else {
-                Text("\(cipher.identity?.firstName ?? "") \(cipher.identity?.lastName ?? "")")
-                    .lineLimit(1)
-                    .truncationMode(.tail)
-            }
+            secondaryText
         }
         .padding(5)
     }
 
-    /// Get default image depending on cipher type
-    private func getDefaultImage() -> String {
-        if cipher.type == 3 {
-            return "creditcard"
-        } else if cipher.type == 4 {
-            return "person.text.rectangle"
-        } else if cipher.type == 2 {
-            return "document"
+    /// Secondary text based on cipher type
+    private var secondaryText: some View {
+        Group {
+            switch cipher.type {
+            case .creditCard: // Card
+                Text("*\(cipher.card?.number?.suffix(4) ?? "")")
+            case .identity: // Identity
+                Text("\(cipher.identity?.firstName ?? "") \(cipher.identity?.lastName ?? "")")
+            default: // Login or other
+                Text("\(cipher.login?.username ?? "")")
+            }
         }
-        return "globe"
+        .lineLimit(1)
+        .truncationMode(.tail)
+    }
+
+    /// Details button
+    private var detailsButton: some View {
+        Button(action: goToDetails) {
+            Image(systemName: "note.text")
+        }
+    }
+
+    /// Get default image name based on cipher type
+    private func getDefaultImage() -> String {
+        switch cipher.type {
+        case .creditCard:
+            return "creditcard"
+        case .identity:
+            return "person.text.rectangle"
+        case .note:
+            return "document"
+        default:
+            return "globe"
+        }
     }
 
     /// Loads the favicon image asynchronously
     private func loadFavicon() {
         Task {
-            do {
-                // Run getFavicon in the background
-                let result = await Task.detached(priority: .background) { () -> Image? in
-                    return await cipher.getFavicon()
-                }.value
+            let result = await Task.detached(priority: .background) {
+                await cipher.getFavicon()
+            }.value
 
-                // Update the UI on the main thread
-                await MainActor.run {
-                    self.faviconImage = result
-                }
+            await MainActor.run {
+                self.faviconImage = result
             }
         }
     }

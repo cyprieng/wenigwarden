@@ -84,8 +84,7 @@ class LoginViewModel: ObservableObject {
         appState.url = url
         appState.persist()
 
-        BitwardenAPI.shared.selfHostedURL = url
-        BitwardenAPI.shared.host = hostType
+        BitwardenAPI.shared.setHost(host: hostType, url: url)
 
         // We can unlock directly if already logged in but not unlocked
         if vault.logged && !vault.unlocked {

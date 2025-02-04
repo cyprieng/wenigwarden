@@ -7,9 +7,16 @@
 
 import SwiftUI
 
-/// Text label component
+/// A view component for displaying bold labels with consistent formatting
 struct TextLabel: View {
-    let title: String
+    /// The label text to display
+    private let title: String
+
+    /// Initialize text label
+    /// - Parameter title: The label text
+    init(title: String) {
+        self.title = title
+    }
 
     var body: some View {
         Text("\(title):")
@@ -17,14 +24,24 @@ struct TextLabel: View {
     }
 }
 
-/// Text value component
+/// A view component for displaying truncated text values with consistent width
 struct TextValue: View {
-    let text: String
+    /// The text to display
+    private let text: String
+
+    /// Default width for the text value
+    private let defaultWidth: CGFloat = 200
+
+    /// Initialize text value
+    /// - Parameter text: The text to display
+    init(text: String) {
+        self.text = text
+    }
 
     var body: some View {
         Text(text)
             .lineLimit(1)
             .truncationMode(.tail)
-            .frame(width: 200, alignment: .leading)
+            .frame(width: defaultWidth, alignment: .leading)
     }
 }

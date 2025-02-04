@@ -12,7 +12,7 @@ import AppKit
 import ServiceManagement
 
 /// A class that manages the app's state and user data
-class AppState: ObservableObject {
+final class AppState: ObservableObject {
     // Singleton instance of AppState
     static let shared = AppState()
 
@@ -46,14 +46,20 @@ class AppState: ObservableObject {
         enableTouchId = UserDefaults.standard.bool(forKey: "enableTouchId")
         lastVaultSync = UserDefaults.standard.object(forKey: "lastVaultSync") as? Date
 
-        // Keyboard event to trigger menu extra opening
-        KeyboardShortcuts.onKeyUp(for: .toggleMenu) {
-            self.toggleAppVisibility()
-        }
+        setupKeyboardShortcuts()
+        setupLockScreenObserver()
+    }
 
-        // Listen for lock event
-        let dnc = DistributedNotificationCenter.default()
-        dnc.addObserver(
+    /// Sets up keyboard shortcuts
+    private func setupKeyboardShortcuts() {
+        KeyboardShortcuts.onKeyUp(for: .toggleMenu) { [weak self] in
+            self?.toggleAppVisibility()
+        }
+    }
+
+    /// Sets up lock screen observer
+    private func setupLockScreenObserver() {
+        DistributedNotificationCenter.default().addObserver(
             forName: .init("com.apple.screenIsLocked"),
             object: nil,
             queue: .main

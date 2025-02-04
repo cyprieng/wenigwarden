@@ -11,7 +11,7 @@ import Alamofire
 /// Model representing a cipher
 struct CipherModel: Codable, Identifiable {
     var id: String
-    var type: Int
+    var type: CipherType
     var name: String
     var login: Login?
     var organizationId: String?
@@ -48,7 +48,7 @@ struct CipherModel: Codable, Identifiable {
          deletedDate: String?,
          key: String?) {
         self.id = id
-        self.type = type
+        self.type = CipherType(rawValue: type) ?? .login
         self.name = name
         self.login = login
         self.organizationId = organizationId
@@ -61,7 +61,7 @@ struct CipherModel: Codable, Identifiable {
         let caseInsensitiveDecoder = CaseInsensitiveDecoder(decoder)
         let container = try caseInsensitiveDecoder.container(keyedBy: CodingKeys.self)
         id = try container.decode(String.self, forKey: .id)
-        type = try container.decode(Int.self, forKey: .type)
+        type = CipherType(rawValue: try container.decode(Int.self, forKey: .type)) ?? .login
         name = try container.decode(String.self, forKey: .name)
         login = try? container.decode(Login.self, forKey: .login)
         organizationId = try? container.decode(String.self, forKey: .organizationId)
@@ -137,7 +137,7 @@ struct CipherModel: Codable, Identifiable {
         let decKey = try? getDecKey()
         var cipherDecoded = CipherModel(
             id: id,
-            type: type,
+            type: type.rawValue,
             name: decryptString(name, decKey: decKey)!,
             login: Login(
                 username: decryptString(login?.username, decKey: decKey),

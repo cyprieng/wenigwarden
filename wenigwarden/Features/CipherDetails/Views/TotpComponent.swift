@@ -8,15 +8,21 @@
 import SwiftUI
 import SwiftOTP
 
-/// A component to show TOTP
+/// A view component to display and manage TOTP codes
 struct TotpComponent: View {
-    var copyKeyCode: String
-    @ObservedObject private var totpHelper: TotpHelper
+    /// Key code for copying TOTP value
+    private let copyKeyCode: String
 
-    /// Init totp with given secret
+    /// Helper for managing TOTP generation and updates
+    @StateObject private var totpHelper: TotpHelper
+
+    /// Initialize TOTP component
+    /// - Parameters:
+    ///   - totpSecret: The secret key for TOTP generation
+    ///   - copyKeyCode: Keyboard shortcut for copying TOTP
     init(totpSecret: String, copyKeyCode: String) {
         self.copyKeyCode = copyKeyCode
-        self.totpHelper = .init(totpSecret: totpSecret)
+        self._totpHelper = StateObject(wrappedValue: TotpHelper(totpSecret: totpSecret))
     }
 
     var body: some View {
@@ -25,72 +31,87 @@ struct TotpComponent: View {
 
             Text("\(totpHelper.currentTotp) (\(totpHelper.currentSeconds)s)")
 
-            ClipboardButton(data: totpHelper.currentTotp, copyKeyCode: copyKeyCode)
+            ClipboardButton(
+                data: totpHelper.currentTotp,
+                copyKeyCode: copyKeyCode
+            )
         }
     }
 }
 
-/// TOTP helper
-class TotpHelper: ObservableObject {
-    var totp: TOTP?  // Lib TOTP
+/// Helper class for managing TOTP generation and updates
+final class TotpHelper: ObservableObject {
+    /// TOTP generator instance
+    private var totp: TOTP?
 
-    @Published var currentTotp: String = ""  // Current totp
-    @Published var currentSeconds: Int = 0  // Current seconds remaining
+    /// Current TOTP code
+    @Published private(set) var currentTotp: String = ""
 
-    /// Init with secret
+    /// Seconds remaining until next TOTP update
+    @Published private(set) var currentSeconds: Int = 0
+
+    /// Timer for TOTP updates
+    private var updateTimer: Timer?
+
+    /// Initialize TOTP helper
+    /// - Parameter totpSecret: The secret key for TOTP generation
     init(totpSecret: String) {
-        if let totpSecretData = base32DecodeToData(extractSecretFromOTPAuth(totpSecret)) {
-            // Init lib
-            self.totp = TOTP(secret: totpSecretData)
-            if self.totp != nil {
-                // First totp
-                self.updateTotp()
+        setupTOTP(with: totpSecret)
+    }
 
-                // Update every seconds
-                Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) {[weak self] timer in
-                    guard let self = self else {
-                        timer.invalidate()
-                        return
-                    }
+    deinit {
+        updateTimer?.invalidate()
+    }
 
-                    self.updateTotp()
-                }
-            }
+    /// Sets up TOTP generation with the provided secret
+    private func setupTOTP(with secret: String) {
+        guard let secretData = base32DecodeToData(extractSecretFromOTPAuth(secret)),
+              let totp = TOTP(secret: secretData) else {
+            return
+        }
+
+        self.totp = totp
+        updateTotp()
+        startUpdateTimer()
+    }
+
+    /// Starts the timer for TOTP updates
+    private func startUpdateTimer() {
+        updateTimer = Timer.scheduledTimer(
+            withTimeInterval: 1.0,
+            repeats: true
+        ) { [weak self] _ in
+            self?.updateTotp()
         }
     }
 
-    /// Update OTP
+    /// Updates the current TOTP code and remaining seconds
     private func updateTotp() {
-        if currentSeconds <= 1 {  // Otp is expired
-            currentTotp = totp!.generate(time: Date.now) ?? ""
+        if currentSeconds <= 1 {
+            currentTotp = totp?.generate(time: Date.now) ?? ""
             currentSeconds = 30
-        } else {  // Decrement
+        } else {
             currentSeconds -= 1
         }
     }
 
-    /// Extract secret from string
-    func extractSecretFromOTPAuth(_ input: String) -> String {
-        // Check if string contains "otpauth://totp/" and "secret="
-        if input.hasPrefix("otpauth://totp/") && input.contains("secret=") {
-            // Split the string by "&" to get parameters
-            let components = input.components(separatedBy: "&")
-
-            // Find the component that contains "secret="
-            if let secretComponent = components.first(where: { $0.contains("secret=") }) {
-                // Split by "=" and get the secret value
-                let secretParts = secretComponent.components(separatedBy: "secret=")
-                if secretParts.count > 1 {
-                    return secretParts[1]
-                }
-            }
+    /// Extracts TOTP secret from otpauth URL
+    /// - Parameter input: Input string containing TOTP secret
+    /// - Returns: Extracted secret or original input if not found
+    private func extractSecretFromOTPAuth(_ input: String) -> String {
+        guard input.hasPrefix("otpauth://totp/"),
+              input.contains("secret="),
+              let secretComponent = input.components(separatedBy: "&")
+                .first(where: { $0.contains("secret=") }),
+              let secret = secretComponent.components(separatedBy: "secret=").last else {
+            return input
         }
-
-        // If pattern doesn't match or secret not found, return full string
-        return input
+        return secret
     }
 
-    /// Helper function to decode Base32
+    /// Decodes Base32 string to Data
+    /// - Parameter string: Base32 encoded string
+    /// - Returns: Decoded data or nil if invalid
     private func base32DecodeToData(_ string: String) -> Data? {
         let base32Alphabet = Array("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567")
         var bytes = [UInt8]()

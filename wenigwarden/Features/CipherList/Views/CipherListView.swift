@@ -9,51 +9,24 @@ import SwiftUI
 
 /// A view representing the list of ciphers
 struct CipherListView: View {
-    @ObservedObject var viewModel = CipherListViewModel()
-    @ObservedObject var state = AppState.shared
+    /// View model for managing cipher list state and actions
+    @StateObject private var viewModel = CipherListViewModel()
+
+    /// Global application state
+    @ObservedObject private var state = AppState.shared
 
     /// Search field focus state
-    @FocusState var isSearchFieldFocused: Bool
+    @FocusState private var isSearchFieldFocused: Bool
 
     var body: some View {
         NavigationStack(path: $viewModel.path) {
             VStack {
-                // Relogin button
-                if state.needRelogin {
-                    Button(action: {
-                        Vault.shared.logged = false
-                        Vault.shared.unlocked = false
-                    }, label: {
-                        HStack {
-                            Image(systemName: "exclamationmark.triangle.fill")
-                                .foregroundColor(.yellow)
-                            Text("An error occured: you need to login again")
-                        }
-                    })
-                }
-
-                HStack {
-                    // Search field
-                    searchField
-
-                    // Settings link
-                    Button(action: {
-                        viewModel.goToSettings()
-                    }, label: {
-                        Image(systemName: "gear")
-                    })
-                }
-
-                // List of ciphers
+                reloginButtonIfNeeded
+                toolbarSection
                 cipherList
-            }.navigationDestination(for: SettingsView.self) { settingsView in
-                // Link for settings
-                settingsView
             }
-            .navigationDestination(for: CipherDetailsView.self) { detailView in
-                // Link for cipher details
-                detailView
-            }
+            .navigationDestination(for: SettingsView.self) { $0 }
+            .navigationDestination(for: CipherDetailsView.self) { $0 }
             .onChange(of: viewModel.path) { _, newValue in
                 if newValue.isEmpty {
                     viewModel.onAppear()
@@ -63,7 +36,30 @@ struct CipherListView: View {
         .onAppear(perform: viewModel.loadInitialCiphers)
     }
 
-    /// The search field for filtering ciphers
+    /// Relogin button shown when authentication is needed
+    private var reloginButtonIfNeeded: some View {
+        Group {
+            if state.needRelogin {
+                Button(action: Vault.shared.setUnlogged) {
+                    HStack {
+                        Image(systemName: "exclamationmark.triangle.fill")
+                            .foregroundColor(.yellow)
+                        Text("An error occured: you need to login again")
+                    }
+                }
+            }
+        }
+    }
+
+    /// Toolbar section containing search and settings
+    private var toolbarSection: some View {
+        HStack {
+            searchField
+            settingsButton
+        }
+    }
+
+    /// Search field for filtering ciphers
     private var searchField: some View {
         TextField("Search", text: $viewModel.searchQuery)
             .textFieldStyle(RoundedBorderTextFieldStyle())
@@ -79,19 +75,18 @@ struct CipherListView: View {
             .focused($isSearchFieldFocused)
     }
 
-    /// The list of ciphers
+    /// Settings button
+    private var settingsButton: some View {
+        Button(action: viewModel.goToSettings) {
+            Image(systemName: "gear")
+        }
+    }
+
+    /// List of ciphers with scroll functionality
     private var cipherList: some View {
         ScrollViewReader { proxy in
             List(selection: $viewModel.focusedCipherIndex) {
-                ForEach((viewModel.ciphers ?? []).indices, id: \.self) { index in
-                    let cipher = viewModel.ciphers![index]
-                    CipherListItemView(cipher: Binding(
-                        get: { return cipher},
-                        set: { _ in }
-                    ), goToDetails: {viewModel.goToDetails(cipher, index: index)})
-                    .tag(index)
-                    .listRowSeparatorTint(.gray)
-                }
+                cipherListContent
             }
             .frame(minHeight: viewModel.minHeight)
             .onAppear {
@@ -100,13 +95,34 @@ struct CipherListView: View {
             }
             .onDisappear(perform: viewModel.stopSyncJob)
             .onChange(of: viewModel.focusedCipherIndex, initial: true) { _, target in
-                // Scroll to currently selected item
-                if let target = target {
+                if let target {
                     withAnimation {
                         proxy.scrollTo(target, anchor: .center)
                     }
                 }
             }
         }
+    }
+
+    /// Content of the cipher list
+    private var cipherListContent: some View {
+        ForEach((viewModel.ciphers ?? []).indices, id: \.self) { index in
+            cipherListItem(at: index)
+        }
+    }
+
+    /// Individual cipher list item
+    /// - Parameter index: Index of the cipher in the list
+    private func cipherListItem(at index: Int) -> some View {
+        let cipher = viewModel.ciphers![index]
+        return CipherListItemView(
+            cipher: Binding(
+                get: { cipher },
+                set: { _ in }
+            ),
+            goToDetails: { viewModel.goToDetails(cipher, index: index) }
+        )
+        .tag(index)
+        .listRowSeparatorTint(.gray)
     }
 }

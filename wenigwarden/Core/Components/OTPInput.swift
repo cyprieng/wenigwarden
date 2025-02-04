@@ -9,9 +9,25 @@ import SwiftUI
 
 /// OTP digit field
 struct OTPDigitField: View {
-    @Binding var text: String
-    let index: Int
-    @FocusState.Binding var focusedField: Int?
+    /// The text content of the field
+    @Binding private var text: String
+
+    /// The index of this field in the OTP sequence
+    private let index: Int
+
+    /// Binding to control field focus
+    @FocusState.Binding private var focusedField: Int?
+
+    /// Initialize a new OTP digit field
+    /// - Parameters:
+    ///   - text: Binding to the field's text content
+    ///   - index: The position of this field in the OTP sequence
+    ///   - focusedField: Binding to control field focus
+    init(text: Binding<String>, index: Int, focusedField: FocusState<Int?>.Binding) {
+        self._text = text
+        self.index = index
+        self._focusedField = focusedField
+    }
 
     var body: some View {
         TextField("", text: $text)
@@ -29,9 +45,23 @@ struct OTPDigitField: View {
 
 /// OTP Input
 struct OTPInput: View {
+    /// Array of OTP digits
     @State private var otpFields: [String] = Array(repeating: "", count: 6)
+
+    /// Currently focused field
     @FocusState private var focusedField: Int?
-    let onComplete: (String) -> Void
+
+    /// Callback when OTP is complete
+    private let onComplete: (String) -> Void
+
+    /// Number of OTP digits
+    private let digitCount = 6
+
+    /// Initialize a new OTP input
+    /// - Parameter onComplete: Callback triggered when all digits are entered
+    init(onComplete: @escaping (String) -> Void) {
+        self.onComplete = onComplete
+    }
 
     var body: some View {
         HStack(spacing: 12) {

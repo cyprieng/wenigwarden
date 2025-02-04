@@ -9,22 +9,45 @@ import SwiftUI
 import KeyboardShortcuts
 import ServiceManagement
 
-/// The settings view
+/// The settings view that displays and manages application settings
 struct SettingsView: View, Hashable {
-    @StateObject var viewModel = SettingsViewModel()
-    var refreshList: () -> Void
+    /// View model that manages the settings state and business logic
+    @StateObject private var viewModel = SettingsViewModel()
 
+    /// Callback to refresh the main list when settings change
+    private let refreshList: () -> Void
+
+    /// Initialize settings view with a refresh callback
+    /// - Parameter refreshList: Callback function to refresh the main list
+    init(refreshList: @escaping () -> Void) {
+        self.refreshList = refreshList
+    }
+
+    /// Main view body that composes all settings sections
     var body: some View {
         VStack {
-            // Toggle to enable touch id
+            touchIdSection
+            shortcutSection
+            startupSection
+            syncSection
+            securitySection
+            versionSection
+        }
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .padding(.vertical, 16)
+        .navigationTitle("Settings")
+        .onAppear(perform: viewModel.loadInitialState)
+    }
+
+    /// Section that manages Touch ID settings and password input
+    private var touchIdSection: some View {
+        VStack(alignment: .leading) {
             Toggle("Enable Touch ID", isOn: $viewModel.enableTouchId)
                 .toggleStyle(.switch)
                 .onChange(of: viewModel.enableTouchId) {
                     viewModel.handleTouchIdChange()
                 }
-                .frame(maxWidth: .infinity, alignment: .leading)
 
-            // Password input for TouchID
             if viewModel.showPasswordInput {
                 HStack {
                     SecureField("Password", text: $viewModel.password)
@@ -36,77 +59,85 @@ struct SettingsView: View, Hashable {
                     }, isLoading: $viewModel.isLoadingTouchId, error: $viewModel.errorTouchId)
                     .buttonStyle(.borderedProminent)
                     .disabled(viewModel.password.isEmpty)
-                }
-                .frame(maxWidth: .infinity, alignment: .leading)
+                }.frame(maxWidth: .infinity, alignment: .leading)
             }
+        }.frame(maxWidth: .infinity, alignment: .leading)
+    }
 
-            // Shortcut setting
-            Form {
-                KeyboardShortcuts.Recorder("Toggle menu shortcut:", name: .toggleMenu)
-            }
-            .frame(maxWidth: .infinity, alignment: .leading)
+    /// Section for keyboard shortcut configuration
+    private var shortcutSection: some View {
+        Form {
+            KeyboardShortcuts.Recorder("Toggle menu shortcut:", name: .toggleMenu)
+        }.frame(maxWidth: .infinity, alignment: .leading)
+    }
 
-            // Start on boot
-            Toggle(
-                "Start at login",
-                isOn: Binding(
-                    get: { SMAppService.mainApp.status == .enabled },
-                    set: { isEnabled in
-                        if isEnabled {
-                            try? SMAppService.mainApp.register()
-                        } else {
-                            try? SMAppService.mainApp.unregister()
-                        }
+    /// Section to manage application startup settings
+    private var startupSection: some View {
+        Toggle(
+            "Start at login",
+            isOn: Binding(
+                get: { SMAppService.mainApp.status == .enabled },
+                set: { isEnabled in
+                    if isEnabled {
+                        try? SMAppService.mainApp.register()
+                    } else {
+                        try? SMAppService.mainApp.unregister()
                     }
-                )
+                }
             )
-            .toggleStyle(.switch)
-            .frame(maxWidth: .infinity, alignment: .leading)
+        )
+        .toggleStyle(.switch)
+        .frame(maxWidth: .infinity, alignment: .leading)
+    }
 
-            // Sync
+    /// Section for vault synchronization controls and status
+    private var syncSection: some View {
+        VStack(alignment: .leading) {
             Text("Sync vault")
                 .fontWeight(.bold)
                 .padding(.top, 16)
-                .frame(maxWidth: .infinity, alignment: .leading)
 
-            if viewModel.lastVaultSync != nil {
-                Text("Last sync: \(viewModel.lastVaultSync!)")
-                    .frame(maxWidth: .infinity, alignment: .leading)
+            if let lastSync = viewModel.lastVaultSync {
+                Text("Last sync: \(lastSync)")
             }
+
             ButtonWithLoader(action: {
                 viewModel.syncVault(refreshList)
             }, label: {
                 Text("Sync vault now")
             }, isLoading: $viewModel.isLoadingSync, error: $viewModel.errorSync)
-            .frame(maxWidth: .infinity, alignment: .leading)
+        }.frame(maxWidth: .infinity, alignment: .leading)
+    }
 
-            // Lock vault
+    /// Section for security-related actions like locking vault and logout
+    private var securitySection: some View {
+        VStack(alignment: .leading) {
             Button("Lock vault") {
                 Vault.shared.lock()
             }
             .padding(.top, 16)
-            .frame(maxWidth: .infinity, alignment: .leading)
 
-            // Log out
             Button("Log out", action: viewModel.logout)
                 .padding(.top, 16)
-                .frame(maxWidth: .infinity, alignment: .leading)
-
-            // Version
-            Text("Version: \(viewModel.version ?? "") (Build \(viewModel.buildNumber ?? ""))")
-        }
-        .frame(maxWidth: .infinity, alignment: .leading)
-        .padding(.vertical, 16)
-        .navigationTitle("Settings")
-        .onAppear(perform: viewModel.loadInitialState)
+        }.frame(maxWidth: .infinity, alignment: .leading)
     }
 
-    // Always equal
+    /// Section displaying application version information
+    private var versionSection: some View {
+        Text("Version: \(viewModel.version ?? "") (Build \(viewModel.buildNumber ?? ""))")
+    }
+}
+
+// MARK: - Hashable Implementation
+extension SettingsView {
+    /// Equality comparison for SettingsView
+    /// - Returns: Always returns true as settings view is static
     static func == (lhs: SettingsView, rhs: SettingsView) -> Bool {
-        return true
+        true
     }
 
-    /// Staic hash
+    /// Hashing implementation for SettingsView
+    /// - Parameter hasher: Hasher to use for hashing
     func hash(into hasher: inout Hasher) {
         hasher.combine("settings")
     }

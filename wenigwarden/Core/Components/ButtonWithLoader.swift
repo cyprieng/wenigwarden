@@ -9,20 +9,38 @@ import SwiftUI
 
 // Button with loader animation
 struct ButtonWithLoader<Label>: View where Label: View {
-    // Action on click
-    let action: () -> Void
+    /// Action executed on button click
+    private let action: () -> Void
 
-    // Label
-    let label: () -> Label
+    /// Button label view builder
+    private let label: () -> Label
 
-    // Is loading state
-    @Binding var isLoading: Bool
+    /// Loading state of the button
+    @Binding private var isLoading: Bool
 
-    // Error flag
-    @Binding var error: Bool
+    /// Error state flag
+    @Binding private var error: Bool
 
-    // Shake button when there is an error
-    @State var shakeButton: Bool = false
+    /// Internal state for shake animation
+    @State private var shakeButton: Bool = false
+
+    /// Initialize a new ButtonWithLoader
+    /// - Parameters:
+    ///   - action: The action to perform when clicked
+    ///   - isLoading: Binding to control the loading state
+    ///   - error: Binding to control the error state
+    ///   - label: ViewBuilder for the button's label
+    init(
+        action: @escaping () -> Void,
+        @ViewBuilder label: @escaping () -> Label,
+        isLoading: Binding<Bool>,
+        error: Binding<Bool>
+    ) {
+        self.action = action
+        self.label = label
+        self._isLoading = isLoading
+        self._error = error
+    }
 
     var body: some View {
         if isLoading {

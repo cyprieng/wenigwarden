@@ -10,33 +10,35 @@ import Alamofire
 import CommonCrypto
 import KeychainAccess
 
-/// Bitwarden host types
-enum BitwardenHost: String {
-    case eu // swiftlint:disable:this identifier_name
-    case com
-    case selfHosted
-}
-
 /// A class to interact with the Bitwarden API
-class BitwardenAPI {
+final class BitwardenAPI {
     static let shared = BitwardenAPI()
 
-    var host: BitwardenHost?
-    var selfHostedURL: String?
+    // Host
+    private var host: BitwardenHost?
+    private var selfHostedURL: String?
 
-    var accessToken: String?
-    var refreshToken: String?
+    // Tokens
+    private var accessToken: String?
+    private var refreshToken: String?
 
     // Keychain to store refresh token
-    var keychain: Keychain
+    private var keychain: Keychain
 
     // Store two factor provider
     // Basic implementation that should be improved to support multiple
     var twoFactorProvider: String?
 
+    /// Init Bitwarden API
     private init() {
         keychain = Keychain(service: "io.cyprien.wenigwarden")
         refreshToken = try? keychain.get("refreshToken")
+    }
+
+    /// Set host
+    public func setHost(host: BitwardenHost, url: String? = nil) {
+        self.host = host
+        self.selfHostedURL = url
     }
 
     /// Performs a prelogin to get KDF iterations
