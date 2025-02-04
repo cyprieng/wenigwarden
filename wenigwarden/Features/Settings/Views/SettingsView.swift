@@ -31,6 +31,7 @@ struct SettingsView: View, Hashable {
             startupSection
             syncSection
             securitySection
+            quitSection
             versionSection
         }
         .frame(maxWidth: .infinity, alignment: .leading)
@@ -120,6 +121,15 @@ struct SettingsView: View, Hashable {
             Button("Log out", action: viewModel.logout)
                 .padding(.top, 16)
         }.frame(maxWidth: .infinity, alignment: .leading)
+    }
+
+    /// Section for quit button
+    private var quitSection: some View {
+        Button("Quit") {
+            NSApplication.shared.terminate(nil)
+        }
+        .padding(.top, 16)
+        .frame(maxWidth: .infinity, alignment: .leading)
     }
 
     /// Section displaying application version information
