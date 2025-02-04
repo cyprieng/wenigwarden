@@ -31,6 +31,7 @@
 		7E0EAFDF2C7362E900030BC5 /* LoginView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E0EAFDE2C7362E900030BC5 /* LoginView.swift */; };
 		7E0EAFF32C73984A00030BC5 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 7E0EAFF22C73984A00030BC5 /* Alamofire */; };
 		7E3387A22C74B292003EE9DF /* CryptoSwift in Frameworks */ = {isa = PBXBuildFile; productRef = 7E3387A12C74B292003EE9DF /* CryptoSwift */; };
+		7E45733D2D4B652600E27399 /* Sparkle in Frameworks */ = {isa = PBXBuildFile; productRef = 7E45733C2D4B652600E27399 /* Sparkle */; };
 		7E74AA522D3FBB49008EEB98 /* TotpComponent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E74AA512D3FBB45008EEB98 /* TotpComponent.swift */; };
 		7E74AA542D3FBBB1008EEB98 /* SwiftOTP in Frameworks */ = {isa = PBXBuildFile; productRef = 7E74AA532D3FBBB1008EEB98 /* SwiftOTP */; };
 		7E761E222C7DDE490037DA47 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7E761E212C7DDE490037DA47 /* LoginViewModel.swift */; };
@@ -53,6 +54,7 @@
 		7E0EAFCD2C73584A00030BC5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7E0EAFD22C73584A00030BC5 /* wenigwarden.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = wenigwarden.entitlements; sourceTree = "<group>"; };
 		7E0EAFDE2C7362E900030BC5 /* LoginView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginView.swift; sourceTree = "<group>"; };
+		7E45733E2D4B66D500E27399 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		7E74AA512D3FBB45008EEB98 /* TotpComponent.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TotpComponent.swift; sourceTree = "<group>"; };
 		7E761E212C7DDE490037DA47 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		7E761E2F2C7DEADA0037DA47 /* CipherListViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CipherListViewModel.swift; sourceTree = "<group>"; };
@@ -88,6 +90,7 @@
 				7E0EAFF32C73984A00030BC5 /* Alamofire in Frameworks */,
 				7E880F892D2D5AF100130EB9 /* KeyboardShortcuts in Frameworks */,
 				7E3387A22C74B292003EE9DF /* CryptoSwift in Frameworks */,
+				7E45733D2D4B652600E27399 /* Sparkle in Frameworks */,
 				7E74AA542D3FBBB1008EEB98 /* SwiftOTP in Frameworks */,
 				7E0875762CC0E75100C7834A /* KeychainAccess in Frameworks */,
 			);
@@ -117,6 +120,7 @@
 		7E0EAFC82C73584800030BC5 /* wenigwarden */ = {
 			isa = PBXGroup;
 			children = (
+				7E45733E2D4B66D500E27399 /* Info.plist */,
 				7E7CE22F2D2940D8005CFF39 /* App */,
 				7E761E242C7DE09A0037DA47 /* Core */,
 				7E761E262C7DE10A0037DA47 /* Models */,
@@ -281,6 +285,7 @@
 				7E0875752CC0E75100C7834A /* KeychainAccess */,
 				7E880F882D2D5AF100130EB9 /* KeyboardShortcuts */,
 				7E74AA532D3FBBB1008EEB98 /* SwiftOTP */,
+				7E45733C2D4B652600E27399 /* Sparkle */,
 			);
 			productName = wenigwarden;
 			productReference = 7E0EAFC62C73584800030BC5 /* wenigwarden.app */;
@@ -320,6 +325,7 @@
 				7E0875742CC0E6C700C7834A /* XCRemoteSwiftPackageReference "KeychainAccess" */,
 				7E880F852D2D5A9500130EB9 /* XCRemoteSwiftPackageReference "KeyboardShortcuts" */,
 				7E74AA502D3FBACB008EEB98 /* XCRemoteSwiftPackageReference "SwiftOTP" */,
+				7E45733B2D4B652600E27399 /* XCRemoteSwiftPackageReference "Sparkle" */,
 			);
 			productRefGroup = 7E0EAFC72C73584800030BC5 /* Products */;
 			projectDirPath = "";
@@ -528,6 +534,7 @@
 				DEVELOPMENT_TEAM = AFPY33LTKS;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = wenigwarden/Info.plist;
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -556,6 +563,7 @@
 				DEVELOPMENT_TEAM = AFPY33LTKS;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = wenigwarden/Info.plist;
 				INFOPLIST_KEY_LSUIElement = YES;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -655,6 +663,14 @@
 				minimumVersion = 1.8.3;
 			};
 		};
+		7E45733B2D4B652600E27399 /* XCRemoteSwiftPackageReference "Sparkle" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/sparkle-project/Sparkle";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 2.6.4;
+			};
+		};
 		7E74AA502D3FBACB008EEB98 /* XCRemoteSwiftPackageReference "SwiftOTP" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/lachlanbell/SwiftOTP.git";
@@ -688,6 +704,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 7E3387A02C74B292003EE9DF /* XCRemoteSwiftPackageReference "CryptoSwift" */;
 			productName = CryptoSwift;
+		};
+		7E45733C2D4B652600E27399 /* Sparkle */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7E45733B2D4B652600E27399 /* XCRemoteSwiftPackageReference "Sparkle" */;
+			productName = Sparkle;
 		};
 		7E74AA532D3FBBB1008EEB98 /* SwiftOTP */ = {
 			isa = XCSwiftPackageProductDependency;

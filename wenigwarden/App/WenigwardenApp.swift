@@ -9,7 +9,6 @@ import SwiftUI
 
 @main
 struct WenigwardenApp: App {
-    // The main entry point of the app
     var body: some Scene {
         // Declares a menu bar extra with a title and system image
         MenuBarExtra("Wenigwarden", systemImage: "key.fill") {

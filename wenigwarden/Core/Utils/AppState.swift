@@ -10,6 +10,7 @@ import SwiftUICore
 import KeyboardShortcuts
 import AppKit
 import ServiceManagement
+import Sparkle
 
 /// A class that manages the app's state and user data
 final class AppState: ObservableObject {
@@ -27,8 +28,17 @@ final class AppState: ObservableObject {
     // Flag indicating that a relog is necessary
     @Published var needRelogin: Bool = false
 
+    // Sparkle update controller
+    public let updaterController: SPUStandardUpdaterController
+
     /// Private initializer to enforce singleton pattern
     private init() {
+        // Init sparkle updater
+        updaterController = SPUStandardUpdaterController(startingUpdater: true, updaterDelegate: nil, userDriverDelegate: nil)
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+            self.updaterController.checkForUpdates(nil)
+        }
+
         // Retrieve stored values or provide default values
         deviceId = UserDefaults.standard.string(forKey: "deviceId") ?? ""
 
