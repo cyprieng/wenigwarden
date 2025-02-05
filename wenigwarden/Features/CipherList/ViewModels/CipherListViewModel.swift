@@ -33,7 +33,7 @@ final class CipherListViewModel: ObservableObject {
     @Published var isSearchFieldFocused: Bool = false
 
     /// Persisted focused cipher index across view updates
-    private static var staticFocusedCipherIndex: Int? = 0
+    internal static var staticFocusedCipherIndex: Int? = 0
 
     /// Flag to prevent multiple keyboard event bindings
     private static var isEventAdded = false

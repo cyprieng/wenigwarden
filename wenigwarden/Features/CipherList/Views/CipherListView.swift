@@ -96,6 +96,8 @@ struct CipherListView: View {
                 if let target {
                     withAnimation {
                         proxy.scrollTo(target, anchor: .center)
+                        CipherListViewModel.staticFocusedCipherIndex = target
+                        viewModel.focusedCipherIndex = target
                     }
                 }
             }
