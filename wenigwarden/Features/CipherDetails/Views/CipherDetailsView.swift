@@ -170,10 +170,7 @@ struct CipherDetailsView: View, Hashable {
         Group {
             if let notes = cipher.notes, !notes.isEmpty {
                 Text("Notes:").bold()
-                Text(notes)
-                    .lineLimit(nil)
-                    .truncationMode(.tail)
-                    .textSelection(.enabled)
+                Text(notes).textSelection(.enabled)
             }
         }
     }
