@@ -8,5 +8,7 @@
 	<string>https://raw.githubusercontent.com/cyprieng/wenigwarden/refs/heads/main/appcast.xml</string>
 	<key>SUPublicEDKey</key>
 	<string>MhI8Nz4cBgF7x2u1b+BWz7r6BMexfnY5soD3rYbnq+U=</string>
+	<key>SUEnableAutomaticChecks</key>
+	<true/>
 </dict>
 </plist>
