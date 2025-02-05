@@ -38,12 +38,13 @@ final class CipherListViewModel: ObservableObject {
     /// Flag to prevent multiple keyboard event bindings
     private static var isEventAdded = false
 
-    /// Timer for periodic vault synchronization
-    private var syncTimer: AnyCancellable?
+    /// Last sync date
+    private var lastSyncDate: Date?
 
     /// Initialize the view model and set up keyboard shortcuts
     init() {
         setupKeyboardShortcuts()
+        lastSyncDate = Date()
     }
 
     /// Sets up keyboard shortcuts for navigation and actions
@@ -149,28 +150,22 @@ final class CipherListViewModel: ObservableObject {
         }))
     }
 
-    /// Starts periodic vault synchronization
-    func startSyncJob() {
-        syncTimer = Timer.publish(every: 60 * 15, on: .main, in: .common)
-            .autoconnect()
-            .sink { [weak self] _ in
-                Task { [weak self] in
-                    try await Vault.shared.updateVault()
-                    await self?.loadInitialCiphers()
-                }
+    /// Vault synchronization
+    func sync() {
+        if lastSyncDate == nil || Date().timeIntervalSince(lastSyncDate!) > 900 {
+            lastSyncDate = Date()
+            Task {
+                try await Vault.shared.updateVault()
+                await self.loadInitialCiphers()
             }
-    }
-
-    /// Stops periodic vault synchronization
-    func stopSyncJob() {
-        syncTimer?.cancel()
-        syncTimer = nil
+        }
     }
 
     /// Handles view appearance
     func onAppear() {
         if path.isEmpty {
             minHeight = defaultMinHeight
+            self.sync()
         }
         focusedCipherIndex = CipherListViewModel.staticFocusedCipherIndex
     }

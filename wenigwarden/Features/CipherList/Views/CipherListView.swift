@@ -91,9 +91,7 @@ struct CipherListView: View {
             .frame(minHeight: viewModel.minHeight)
             .onAppear {
                 viewModel.onAppear()
-                viewModel.startSyncJob()
             }
-            .onDisappear(perform: viewModel.stopSyncJob)
             .onChange(of: viewModel.focusedCipherIndex, initial: true) { _, target in
                 if let target {
                     withAnimation {
