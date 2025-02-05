@@ -196,7 +196,7 @@ class Vault: ObservableObject {
     /// - Parameter masterKey: The master key
     internal func unlock(masterKey: Data) async throws {
         self.masterKey = masterKey
-        self.encKey = try decrypt(encKey: [UInt8](masterKey), str: encryptedEncKey!)
+        self.encKey = try decrypt(key: [UInt8](masterKey), str: encryptedEncKey!)
 
         // Enc key empty -> master key is invalid
         if encKey?.isEmpty ?? true {

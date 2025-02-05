@@ -4,6 +4,12 @@ import CryptoSwift
 
 // swiftlint:disable identifier_name
 
+/// Generates a master encryption key using email and password
+/// - Parameters:
+///   - email: User's email address used as salt
+///   - password: User's password
+///   - kdfIterations: Number of iterations for key derivation
+/// - Returns: Derived key as Data object or nil if generation fails
 func generateMasterKey(email: String, password: String, kdfIterations: Int) -> Data? {
     return pbkdf2(hash: CCPBKDFAlgorithm(kCCPRFHmacAlgSHA256),
                   passwordData: password.data(using: .utf8)!,
@@ -12,15 +18,26 @@ func generateMasterKey(email: String, password: String, kdfIterations: Int) -> D
                   rounds: kdfIterations)
 }
 
+/// Securely compares two MAC (Message Authentication Code) values
+/// - Parameters:
+///   - macKey: Key used for HMAC calculation
+///   - mac1: First MAC value to compare
+///   - mac2: Second MAC value to compare
+/// - Returns: Boolean indicating if MACs are equal
 func macsEqual(macKey: [UInt8], mac1: [UInt8], mac2: [UInt8]) -> Bool {
     do {
         let hmac1 = try HMAC(key: macKey, variant: .sha2(.sha256)).authenticate(mac1)
         let hmac2 = try HMAC(key: macKey, variant: .sha2(.sha256)).authenticate(mac2)
         return hmac1 == hmac2
     } catch {return false}
-
 }
 
+/// Implements HKDF (HMAC-based Key Derivation Function) to stretch a key
+/// - Parameters:
+///   - prk: Input key material
+///   - info: Context and application specific information
+///   - size: Desired output size in bytes
+/// - Returns: Derived key material
 func hkdfStretch(prk: [UInt8], info: String, size: Int) -> [UInt8] {
     let hashlen = 32
     var prev: [UInt8] = []
@@ -45,19 +62,21 @@ func hkdfStretch(prk: [UInt8], info: String, size: Int) -> [UInt8] {
     return okm
 }
 
-func decrypt(decKey: [UInt8]? = nil, encKey: [UInt8]? = nil, str: String) throws -> [UInt8] {
-    // Break the encKey into the private key and mac digest
-    var key: [UInt8]
-    var macKey: [UInt8] = []
+/// Convenience function to decrypt string using vault's encryption key
+/// - Parameter str: Encrypted string to decrypt
+/// - Returns: Decrypted bytes
+func decrypt(str: String) throws -> [UInt8] {
+    return try decrypt(key: Vault.shared.encKey!, str: str)
+}
 
-    if let encKey {
-        key = Array(encKey.prefix(32))
-        macKey = Array(encKey.suffix(32))
-    } else if let decKey {
-        key = decKey
-    } else {
-        key = Vault.shared.encKey!
-    }
+/// Decrypts an encrypted string using provided key or vault's encryption key
+/// - Parameters:
+///   - key: Encryption key to use (optional)
+///   - str: Encrypted string to decrypt
+/// - Returns: Decrypted bytes
+func decrypt(key: [UInt8]?, str: String) throws -> [UInt8] {
+    var macKey: [UInt8] = []
+    var decryptKey: [UInt8] = key ?? Vault.shared.encKey!
 
     // Break the encrypted string into it's iv and data components
     let split = str.components(separatedBy: "|")
@@ -69,12 +88,12 @@ func decrypt(decKey: [UInt8]? = nil, encKey: [UInt8]? = nil, str: String) throws
     let ct = (Data(base64Encoded: split[1])?.bytes)
     let mac2 = (Data(base64Encoded: split[2])?.bytes)
     if split[0].prefix(1) == "2" {
-        if key.count == 32 {
-            macKey = hkdfStretch(prk: key, info: "mac", size: 32)
-            key = hkdfStretch(prk: key, info: "enc", size: 32)
-        } else if key.count == 64 {
-            macKey = Array(key.suffix(32))
-            key = Array(key.prefix(32))
+        if decryptKey.count == 32 {
+            macKey = hkdfStretch(prk: decryptKey, info: "mac", size: 32)
+            decryptKey = hkdfStretch(prk: decryptKey, info: "enc", size: 32)
+        } else if decryptKey.count == 64 {
+            macKey = Array(decryptKey.suffix(32))
+            decryptKey = Array(decryptKey.prefix(32))
         }
     }
     do {
@@ -83,7 +102,7 @@ func decrypt(decKey: [UInt8]? = nil, encKey: [UInt8]? = nil, str: String) throws
             return []
         }
 
-        let aes = try AES(key: key, blockMode: CBC(iv: iv ?? []))
+        let aes = try AES(key: decryptKey, blockMode: CBC(iv: iv ?? []))
         let pt = try aes.decrypt(ct ?? [])
 
         return pt
@@ -93,7 +112,11 @@ func decrypt(decKey: [UInt8]? = nil, encKey: [UInt8]? = nil, str: String) throws
     }
 }
 
-/// Decrypt data
+/// Decrypts data using AES-CBC with provided key
+/// - Parameters:
+///   - key: Encryption key
+///   - data: Encrypted data
+/// - Returns: Decrypted data
 func decryptData(key: [UInt8], data: Data) throws -> Data {
     // Key are the 32 first bytes
     let key = Array(key.prefix(32))
@@ -109,6 +132,14 @@ func decryptData(key: [UInt8], data: Data) throws -> Data {
     return Data(pt)
 }
 
+/// Performs PBKDF2 key derivation
+/// - Parameters:
+///   - hash: Hash algorithm to use
+///   - passwordData: Password data
+///   - salt: Salt data
+///   - keyByteCount: Desired key length in bytes
+///   - rounds: Number of iterations
+/// - Returns: Derived key as Data object
 func pbkdf2(hash: CCPBKDFAlgorithm, passwordData: Data, salt: Data, keyByteCount: Int, rounds: Int) -> Data? {
     let passwordBytes = passwordData.withUnsafeBytes { (passwordPtr: UnsafeRawBufferPointer) -> UnsafePointer<Int8> in
         return passwordPtr.bindMemory(to: Int8.self).baseAddress!
@@ -136,6 +167,9 @@ func pbkdf2(hash: CCPBKDFAlgorithm, passwordData: Data, salt: Data, keyByteCount
     return derivedKeyDataPointer
 }
 
+/// Converts PEM format private key to PKCS1 DER format
+/// - Parameter pemKey: Private key in PEM format
+/// - Returns: Private key in DER format
 func pemToPKCS1DER(_ pemKey: String) throws -> Data? {
     guard let derKey = try? PEM.PrivateKey.toDER(pemKey) else {
         return nil
@@ -146,9 +180,13 @@ func pemToPKCS1DER(_ pemKey: String) throws -> Data? {
     return pkcs1DERKey
 }
 
+/// PKCS8 key format handling class
 class PKCS8 {
     class PrivateKey {
-        // swiftlint:disable:next cyclomatic_complexity
+        // swiftlint:disable cyclomatic_complexity
+        /// Gets the offset of PKCS1 data in DER format key
+        /// - Parameter derKey: Key in DER format
+        /// - Returns: Offset to PKCS1 data or nil if invalid
         public static func getPKCS1DEROffset(_ derKey: Data) -> Int? {
             let bytes = derKey.bytesView
 
@@ -202,6 +240,9 @@ class PKCS8 {
             return offset
         }
 
+        /// Strips PKCS8 header from DER format key if present
+        /// - Parameter derKey: Key in DER format
+        /// - Returns: Key with header stripped or nil if invalid
         public static func stripHeaderIfAny(_ derKey: Data) -> Data? {
             guard let offset = getPKCS1DEROffset(derKey) else {
                 return nil
@@ -211,8 +252,12 @@ class PKCS8 {
     }
 }
 
+/// PEM format handling class
 class PEM {
     class PrivateKey {
+        /// Converts PEM format key to DER format
+        /// - Parameter pemKey: Key in PEM format
+        /// - Returns: Key in DER format
         public static func toDER(_ pemKey: String) throws -> Data? {
             guard let data = PEM.base64Decode(pemKey) else {
                 return nil
@@ -221,11 +266,13 @@ class PEM {
         }
     }
 
+    /// Decodes base64 string to Data
     fileprivate static func base64Decode(_ base64Data: String) -> Data? {
         return Data(base64Encoded: base64Data, options: [.ignoreUnknownCharacters])
     }
 }
 
+/// Data extension for byte manipulation
 extension Data {
     fileprivate var bytesView: BytesView { return BytesView(self) }
 
@@ -233,9 +280,8 @@ extension Data {
         return BytesView(self, range: range)
     }
 
+    /// BytesView struct for efficient byte access
     fileprivate struct BytesView: Collection {
-        // The view retains the Data. That's on purpose.
-        // Data doesn't retain the view, so there's no loop.
         let data: Data
         init(_ data: Data) {
             self.data = data

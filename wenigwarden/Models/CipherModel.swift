@@ -93,7 +93,7 @@ struct CipherModel: Codable, Identifiable {
     /// Decrypt given string with given decryption key
     private func decryptString(_ input: String?, decKey: [UInt8]?) -> String? {
         if input != nil {
-            if let decrypted = try? decrypt(decKey: decKey, str: input!) {
+            if let decrypted = try? decrypt(key: decKey, str: input!) {
                 return String(bytes: decrypted, encoding: .utf8)
             }
         }
@@ -241,7 +241,7 @@ struct CipherModel: Codable, Identifiable {
 
             // Get attachment decryption key
             let decKey = try? getDecKey()
-            let decryptKey = try? decrypt(decKey: decKey, str: data!.key)
+            let decryptKey = try? decrypt(key: decKey, str: data!.key)
 
             // Show native save dialog
             DispatchQueue.main.async {
