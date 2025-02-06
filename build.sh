@@ -14,7 +14,7 @@ xcodebuild -project wenigwarden.xcodeproj \
 
 # Sign Sparkle
 current_dir=$(pwd)
-cd "$(pwd)/build/Release/wenigwarden.app/Contents/Frameworks"
+cd "$(pwd)/build/Release/Wenigwarden.app/Contents/Frameworks"
 codesign -f -s "$CODE_SIGN_IDENTITY" -o runtime Sparkle.framework/Versions/B/XPCServices/Installer.xpc
 codesign -f -s "$CODE_SIGN_IDENTITY" -o runtime --preserve-metadata=entitlements Sparkle.framework/Versions/B/XPCServices/Downloader.xpc
 codesign -f -s "$CODE_SIGN_IDENTITY" -o runtime Sparkle.framework/Versions/B/Autoupdate
