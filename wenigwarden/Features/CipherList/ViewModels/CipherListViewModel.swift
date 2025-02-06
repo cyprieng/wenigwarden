@@ -36,22 +36,23 @@ final class CipherListViewModel: ObservableObject {
     internal static var staticFocusedCipherIndex: Int? = 0
 
     /// Flag to prevent multiple keyboard event bindings
-    private static var isEventAdded = false
+    private static var eventMonitor: Any?
 
     /// Last sync date
     private var lastSyncDate: Date?
 
     /// Initialize the view model and set up keyboard shortcuts
     init() {
-        setupKeyboardShortcuts()
         lastSyncDate = Date()
     }
 
     /// Sets up keyboard shortcuts for navigation and actions
     private func setupKeyboardShortcuts() {
-        guard !CipherListViewModel.isEventAdded else { return }
+        if let monitor = CipherListViewModel.eventMonitor {
+            NSEvent.removeMonitor(monitor)
+            CipherListViewModel.eventMonitor = nil
+        }
 
-        CipherListViewModel.isEventAdded = true
         NSEvent.addLocalMonitorForEvents(matching: [.keyDown]) { [weak self] event in
             guard let self = self,
                   let focusedIndex = CipherListViewModel.staticFocusedCipherIndex else {
@@ -170,5 +171,6 @@ final class CipherListViewModel: ObservableObject {
             self.sync()
         }
         focusedCipherIndex = CipherListViewModel.staticFocusedCipherIndex
+        setupKeyboardShortcuts()
     }
 }
