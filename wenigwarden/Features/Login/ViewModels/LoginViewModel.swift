@@ -79,6 +79,12 @@ class LoginViewModel: ObservableObject {
         // Save data in app state service
         let vault = Vault.shared
         let appState = AppState.shared
+
+        // Login changed -> reset vault before login
+        if email != appState.email || hostType != appState.hostType || url != appState.url {
+            vault.reset()
+        }
+
         appState.email = email
         appState.hostType = hostType
         appState.url = url
