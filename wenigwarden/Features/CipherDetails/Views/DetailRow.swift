@@ -42,7 +42,7 @@ struct DetailRow: View {
             ClipboardButton(
                 data: value,
                 copyKeyCode: copyKeyCode
-            )
+            ).gridColumnAlignment(.trailing)
         }
     }
 }

@@ -34,7 +34,7 @@ struct UriRow: View {
             ClipboardButton(
                 data: uri,
                 copyKeyCode: copyKeyCode
-            )
+            ).gridColumnAlignment(.trailing)
         }
     }
 

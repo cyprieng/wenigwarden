@@ -34,7 +34,7 @@ struct TotpComponent: View {
             ClipboardButton(
                 data: totpHelper.currentTotp,
                 copyKeyCode: copyKeyCode
-            )
+            ).gridColumnAlignment(.trailing)
         }
     }
 }

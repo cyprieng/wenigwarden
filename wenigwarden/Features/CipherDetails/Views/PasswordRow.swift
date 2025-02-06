@@ -56,12 +56,12 @@ struct PasswordRow: View {
     /// Action buttons for copy and visibility toggle
     private var actionButtons: some View {
         HStack {
+            visibilityToggle
+
             ClipboardButton(
                 data: password,
                 copyKeyCode: copyKeyCode
-            )
-
-            visibilityToggle
+            ).gridColumnAlignment(.trailing)
         }
     }
 
