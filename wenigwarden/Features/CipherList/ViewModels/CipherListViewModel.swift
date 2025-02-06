@@ -89,7 +89,9 @@ final class CipherListViewModel: ObservableObject {
                 focusedIndex - 1 : 0
 
         case 36: // Enter
-            goToDetails(ciphers[focusedIndex], index: focusedIndex)
+            if ciphers.count > focusedIndex {
+                goToDetails(ciphers[focusedIndex], index: focusedIndex)
+            }
 
         case 53: // Escape
             AppState.shared.toggleAppVisibility()
