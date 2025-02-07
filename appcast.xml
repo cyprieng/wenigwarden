@@ -3,15 +3,15 @@
  <channel>
   <title>wenigwarden</title>
   <item>
-   <title>0.0.2</title>
-   <pubDate>Thu, 06 Feb 2025 08:52:51 +0100</pubDate>
-   <sparkle:version>2</sparkle:version>
-   <sparkle:shortVersionString>0.0.2</sparkle:shortVersionString>
+   <title>0.0.3</title>
+   <pubDate>Thu, 07 Feb 2025 08:51:51 +0100</pubDate>
+   <sparkle:version>3</sparkle:version>
+   <sparkle:shortVersionString>0.0.3</sparkle:shortVersionString>
    <sparkle:minimumSystemVersion>14.0</sparkle:minimumSystemVersion>
-   <enclosure url="https://github.com/cyprieng/wenigwarden/releases/download/v0.0.2/wenigwarden-0.0.2.dmg"
+   <enclosure url="https://github.com/cyprieng/wenigwarden/releases/download/v0.0.3/wenigwarden-0.0.3.dmg"
 	type="application/octet-stream"
-	sparkle:edSignature="hSSeefwGT4RVp6wP32XC2LJf5nmyED+85QCzlIzaPcGaXVubdDyOAr3EY8/qeg6AP8YEFks/BvAbVvBmT6V8CA==" 
-	length="3101207" />
+	sparkle:edSignature="Ak8NtGHPjhG7JPeTZFkQv5YoSPnbfo4hpY6eZwZ+sMhzZ/LqKpUm9y9NLHiZgxFtJp1gElIh8ydlKKL9WIrBDg=="
+	length="3102828" />
   </item>
  </channel>
 </rss>
