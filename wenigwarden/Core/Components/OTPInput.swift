@@ -12,6 +12,9 @@ struct OTPDigitField: View {
     /// The text content of the field
     @Binding private var text: String
 
+    // The text display value to filter numeric char
+    @State private var displayText: String = ""
+
     /// The index of this field in the OTP sequence
     private let index: Int
 
@@ -30,15 +33,24 @@ struct OTPDigitField: View {
     }
 
     var body: some View {
-        TextField("", text: $text)
+        TextField("", text: $displayText)
             .textFieldStyle(.plain)
             .frame(width: 30, height: 50)
             .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray))
             .multilineTextAlignment(.center)
             .focused($focusedField, equals: index)
-            .onReceive(NotificationCenter.default.publisher(for: NSControl.textDidChangeNotification)) { _ in
-                // Only allow numbers
-                text = text.filter { "0123456789".contains($0) }
+            .onChange(of: displayText) { _, newValue in
+                if !newValue.isEmpty {
+                    if Int(newValue) != nil {
+                        text = String(newValue.prefix(1))
+                        displayText = String(newValue.prefix(1))
+                    } else {
+                        displayText = ""
+                        text = ""
+                    }
+                } else {
+                    text = ""
+                }
             }
     }
 }
@@ -100,15 +112,17 @@ struct OTPInput: View {
 
     /// Handle digit input
     private func handleInput(newValue: String, index: Int) {
-        // Limit to 1 char
-        if newValue.count > 1 {
+        // Filter new value
+        if Int(newValue) == nil {
+            return
+        } else if newValue.count > 1 {
             otpFields[index] = String(newValue.prefix(1))
         } else {
             otpFields[index] = newValue
         }
 
         // Go to next field
-        if !newValue.isEmpty && index == focusedField && index < 5 {
+        if !newValue.isEmpty && Int(newValue) != nil && index == focusedField && index < 5 {
             focusedField = (focusedField ?? 0) +  1
         }
     }
